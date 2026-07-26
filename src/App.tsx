@@ -1,38 +1,58 @@
-import { BrowserRouter, Routes, Route } from 'react-router-dom'
-import { StoreProvider } from './contexts/StoreContext'
-import Layout from './components/Layout'
-import Dashboard from './pages/Dashboard'
-import Financeiro from './pages/Financeiro'
-import Caixas from './pages/Caixas'
-import Vendas from './pages/Vendas'
-import Relatorios from './pages/Relatorios'
-import Estoque from './pages/Estoque'
-import Clientes from './pages/Clientes'
-import Funcionarios from './pages/Funcionarios'
-import Fornecedores from './pages/Fornecedores'
-import Configuracoes from './pages/Configuracoes'
-import Lojas from './pages/Lojas'
+import React from 'react';
+import { AppProvider, useApp } from './context/AppContext';
+import { Sidebar } from './components/Sidebar';
+import { Header } from './components/Header';
+import { StoreModal } from './components/StoreModal';
+import { ToastContainer } from './components/ToastContainer';
+
+// Views
+import { FornecedoresView } from './components/views/FornecedoresView';
+import { DashboardView } from './components/views/DashboardView';
+import { VendasView } from './components/views/VendasView';
+import { FinanceiroView } from './components/views/FinanceiroView';
+import { CaixasView } from './components/views/CaixasView';
+import { RelatoriosView } from './components/views/RelatoriosView';
+import { EstoqueView } from './components/views/EstoqueView';
+import { ClientesView } from './components/views/ClientesView';
+import { FuncionariosView } from './components/views/FuncionariosView';
+import { LojasView } from './components/views/LojasView';
+
+const MainContent: React.FC = () => {
+  const { activeView } = useApp();
+
+  return (
+    <main className="flex-1 overflow-y-auto bg-slate-100/70">
+      {activeView === 'fornecedores' && <FornecedoresView />}
+      {activeView === 'dashboard' && <DashboardView />}
+      {activeView === 'vendas' && <VendasView />}
+      {activeView === 'financeiro' && <FinanceiroView />}
+      {activeView === 'caixas' && <CaixasView />}
+      {activeView === 'relatorios' && <RelatoriosView />}
+      {activeView === 'estoque' && <EstoqueView />}
+      {activeView === 'clientes' && <ClientesView />}
+      {activeView === 'funcionarios' && <FuncionariosView />}
+      {activeView === 'lojas' && <LojasView />}
+    </main>
+  );
+};
 
 export default function App() {
   return (
-    <StoreProvider>
-      <BrowserRouter>
-        <Routes>
-          <Route path="/" element={<Layout />}>
-            <Route index element={<Dashboard />} />
-            <Route path="financeiro" element={<Financeiro />} />
-            <Route path="caixas" element={<Caixas />} />
-            <Route path="vendas" element={<Vendas />} />
-            <Route path="relatorios" element={<Relatorios />} />
-            <Route path="estoque" element={<Estoque />} />
-            <Route path="clientes" element={<Clientes />} />
-            <Route path="funcionarios" element={<Funcionarios />} />
-            <Route path="fornecedores" element={<Fornecedores />} />
-            <Route path="configuracoes" element={<Configuracoes />} />
-            <Route path="lojas" element={<Lojas />} />
-          </Route>
-        </Routes>
-      </BrowserRouter>
-    </StoreProvider>
-  )
+    <AppProvider>
+      <div className="flex h-screen w-screen overflow-hidden bg-slate-100 font-sans antialiased text-slate-800">
+        {/* Left Navigation Sidebar */}
+        <Sidebar />
+
+        {/* Right Main Area */}
+        <div className="flex-1 flex flex-col min-w-0 overflow-hidden">
+          <Header />
+          <MainContent />
+        </div>
+
+        {/* Modals & Toasts */}
+        <StoreModal />
+        <ToastContainer />
+      </div>
+    </AppProvider>
+  );
 }

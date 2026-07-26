@@ -1,0 +1,6 @@
+{
+  "name": "ClickUp Vendas - Painel Gerencial",
+  "description": "Sistema completo de gestão de vendas, estoque, fornecedores, clientes e financeiro para comércios e lojas.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}
