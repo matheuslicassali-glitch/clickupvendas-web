@@ -31,10 +31,12 @@ export default function Caixas() {
   if (loading) return <div className="flex items-center justify-center h-[60vh]"><div className="loading-spinner" /></div>
 
   return (
-    <div className="space-y-8 animate-fade-in">
-      <div>
-        <h1 className="page-title">Caixas</h1>
-        <p className="page-subtitle">Historico de sessoes de caixa</p>
+    <div className="page-wrapper">
+      <div className="page-header">
+        <div className="page-header-left">
+          <h1 className="page-title">Caixas</h1>
+          <p className="page-subtitle">Historico de sessoes de caixa</p>
+        </div>
       </div>
 
       {sessoes.length === 0 ? (

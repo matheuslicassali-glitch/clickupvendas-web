@@ -65,15 +65,17 @@ export default function Dashboard() {
   ]
 
   return (
-    <div className="space-y-6 animate-fade-in">
-      <div className="flex items-end justify-between">
-        <div>
+    <div className="page-wrapper">
+      <div className="page-header">
+        <div className="page-header-left">
           <h1 className="page-title">Dashboard</h1>
-          <p className="page-subtitle">Visão geral do seu negócio em tempo real</p>
+          <p className="page-subtitle">Visao geral do seu negocio em tempo real</p>
         </div>
-        <div className="hidden md:flex items-center gap-2 px-3 py-1.5 rounded-lg bg-[#e8f5e9] text-[12px] font-medium text-[#2e7d32]">
-          <Activity size={14} />
-          Tempo real
+        <div className="page-header-right">
+          <div className="hidden md:flex items-center gap-2 px-3 py-1.5 rounded-lg bg-[#e8f5e9] text-[12px] font-medium text-[#2e7d32]">
+            <Activity size={14} />
+            Tempo real
+          </div>
         </div>
       </div>
 

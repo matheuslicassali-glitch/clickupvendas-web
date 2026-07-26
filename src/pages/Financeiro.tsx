@@ -27,10 +27,12 @@ export default function Financeiro() {
   if (loading) return <div className="flex items-center justify-center h-[60vh]"><div className="loading-spinner" /></div>
 
   return (
-    <div className="space-y-8 animate-fade-in">
-      <div>
-        <h1 className="page-title">Financeiro</h1>
-        <p className="page-subtitle">Controle de receitas, despesas e contas</p>
+    <div className="page-wrapper">
+      <div className="page-header">
+        <div className="page-header-left">
+          <h1 className="page-title">Financeiro</h1>
+          <p className="page-subtitle">Controle de receitas, despesas e contas</p>
+        </div>
       </div>
 
       <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
@@ -57,7 +59,7 @@ export default function Financeiro() {
         </div>
       </div>
 
-      <div className="flex items-center gap-2">
+      <div className="filter-tabs">
         <Filter size={16} style={{ color: 'var(--text-muted)' }} />
         {[
           { key: 'todos', label: 'Todos' },
@@ -68,12 +70,7 @@ export default function Financeiro() {
           <button
             key={f.key}
             onClick={() => setFiltro(f.key)}
-            className="px-4 py-2 rounded-xl text-[13px] font-medium transition-all duration-200"
-            style={{
-              background: filtro === f.key ? 'rgba(59, 130, 246, 0.15)' : 'var(--bg-card)',
-              color: filtro === f.key ? 'var(--accent-blue-light)' : 'var(--text-muted)',
-              border: `1px solid ${filtro === f.key ? 'rgba(59, 130, 246, 0.3)' : 'var(--border-color)'}`,
-            }}
+            className={`filter-tab ${filtro === f.key ? 'active' : ''}`}
           >
             {f.label}
           </button>

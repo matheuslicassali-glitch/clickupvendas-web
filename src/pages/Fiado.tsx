@@ -35,10 +35,12 @@ export default function Fiado() {
   if (loading) return <div className="flex items-center justify-center h-[60vh]"><div className="loading-spinner" /></div>
 
   return (
-    <div className="space-y-8 animate-fade-in">
-      <div>
-        <h1 className="page-title">Fiado</h1>
-        <p className="page-subtitle">Controle de debitos e pagamentos</p>
+    <div className="page-wrapper">
+      <div className="page-header">
+        <div className="page-header-left">
+          <h1 className="page-title">Fiado</h1>
+          <p className="page-subtitle">Controle de debitos e pagamentos</p>
+        </div>
       </div>
 
       <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
@@ -87,8 +89,8 @@ export default function Fiado() {
         <select
           value={filtroCliente}
           onChange={(e) => setFiltroCliente(e.target.value ? Number(e.target.value) : '')}
-          className="px-4 py-2.5 rounded-xl text-[13px] font-medium"
-          style={{ background: 'var(--bg-card)', border: '1px solid var(--border-color)', color: 'var(--text-primary)' }}
+          className="px-4 py-2.5 text-[13px] font-medium"
+          style={{ background: 'var(--bg-card)', border: '1px solid var(--border-color)', color: 'var(--text-primary)', borderRadius: 'var(--radius)' }}
         >
           <option value="">Todos os clientes</option>
           {clientes.map((c) => <option key={c.ID} value={c.ID}>{c.Nome}</option>)}

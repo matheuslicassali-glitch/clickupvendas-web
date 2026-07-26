@@ -62,29 +62,31 @@ export default function Lojas() {
     resetForm()
   }
 
-  const inputStyle = 'w-full bg-white border border-[#e8eaed] rounded-lg px-3.5 py-2.5 text-[13px] focus:outline-none focus:border-[#3bafda] focus:ring-2 focus:ring-[#3bafda]/10 transition-all'
-  const labelStyle = 'block text-[12px] font-medium text-[#636e72] mb-1.5'
+  const inputStyle = 'page-input'
+  const labelStyle = 'text-[12px] font-medium text-[var(--text-secondary)]'
 
   return (
-    <div className="space-y-5 max-w-4xl mx-auto animate-fade-in">
-      <div className="flex items-center justify-between pb-4 border-b border-[#e8eaed]">
-        <div>
+    <div className="page-wrapper max-w-4xl mx-auto">
+      <div className="page-header">
+        <div className="page-header-left">
           <h1 className="page-title">Lojas Cadastradas</h1>
-          <p className="page-subtitle">Gerencie as instâncias conectadas ao painel gerencial.</p>
+          <p className="page-subtitle">Gerencie as instancias conectadas ao painel gerencial.</p>
         </div>
-        {!showForm && (
-          <button
-            onClick={() => { resetForm(); setShowForm(true) }}
-            className="flex items-center gap-2 px-4 py-2 rounded-lg bg-[#3bafda] hover:bg-[#2fa3c9] text-white text-[13px] font-medium transition-colors shadow-sm"
-          >
-            <Plus size={15} />
-            Nova Loja
-          </button>
-        )}
+        <div className="page-header-right">
+          {!showForm && (
+            <button
+              onClick={() => { resetForm(); setShowForm(true) }}
+              className="btn btn-primary"
+            >
+              <Plus size={15} />
+              Nova Loja
+            </button>
+          )}
+        </div>
       </div>
 
       {showForm && (
-        <div className="bg-white border border-[#e8eaed] rounded-xl p-6 shadow-sm animate-fade-in">
+        <div className="page-card animate-fade-in">
           <div className="flex items-center justify-between mb-5 pb-3 border-b border-[#e8eaed]">
             <h3 className="text-[15px] font-semibold text-[#2d3436]">
               {editId ? 'Editar Loja' : 'Cadastrar Nova Loja'}
@@ -126,15 +128,15 @@ export default function Lojas() {
             </div>
 
             <div className="flex justify-end gap-2.5 pt-4 border-t border-[#e8eaed]">
-              <button onClick={resetForm} className="px-4 py-2 rounded-lg text-[13px] font-medium text-[#636e72] bg-[#f5f7fa] hover:bg-[#e8eaed] transition-colors">
+              <button onClick={resetForm} className="btn btn-ghost">
                 Cancelar
               </button>
               <button
                 onClick={handleSave}
                 disabled={!nome || !url || !key}
-                className="px-4 py-2 rounded-lg text-[13px] font-medium bg-[#3bafda] hover:bg-[#2fa3c9] text-white disabled:opacity-40 transition-colors shadow-sm"
+                className="btn btn-primary disabled:opacity-40"
               >
-                {editId ? 'Salvar Alterações' : 'Adicionar Loja'}
+                {editId ? 'Salvar Alteracoes' : 'Adicionar Loja'}
               </button>
             </div>
           </div>
@@ -142,7 +144,7 @@ export default function Lojas() {
       )}
 
       {lojas.length === 0 && !showForm ? (
-        <div className="bg-white border border-[#e8eaed] rounded-xl p-12 text-center shadow-sm">
+        <div className="page-card text-center py-12">
           <div className="w-14 h-14 rounded-xl bg-[#e3f2fd] flex items-center justify-center mx-auto mb-4">
             <Store size={24} className="text-[#1565c0]" />
           </div>
@@ -150,7 +152,7 @@ export default function Lojas() {
           <p className="text-[13px] text-[#9ca3af] mb-5 max-w-sm mx-auto">Adicione a URL e a chave do Supabase para monitorar vendas e estoque.</p>
           <button
             onClick={() => setShowForm(true)}
-            className="inline-flex items-center gap-2 px-4 py-2.5 rounded-lg bg-[#3bafda] hover:bg-[#2fa3c9] text-white text-[13px] font-medium transition-colors shadow-sm"
+            className="btn btn-primary"
           >
             <Plus size={16} />
             Cadastrar Primeira Loja
@@ -188,7 +190,7 @@ export default function Lojas() {
                   {!isActive && (
                     <button
                       onClick={() => selecionar(loja.id)}
-                      className="px-3 py-1.5 rounded-lg text-[12px] font-medium text-[#636e72] bg-[#f5f7fa] hover:bg-[#e8eaed] border border-[#e8eaed] transition-colors"
+                      className="btn btn-ghost text-[12px]"
                     >
                       Selecionar
                     </button>
@@ -206,9 +208,9 @@ export default function Lojas() {
         </div>
       )}
 
-      <div className="bg-white border border-[#e8eaed] rounded-xl p-5 shadow-sm text-[13px]">
-        <h4 className="font-semibold text-[#2d3436] mb-2">Como integrar uma nova loja:</h4>
-        <ol className="list-decimal list-inside space-y-1 text-[#9ca3af] text-[12px]">
+      <div className="gradient-card p-5">
+        <h4 className="font-semibold text-[var(--text-primary)] mb-2">Como integrar uma nova loja:</h4>
+        <ol className="list-decimal list-inside space-y-1 text-[var(--text-muted)] text-[12px]">
           <li>Abra o aplicativo desktop ClickUpVendas instalado na loja.</li>
           <li>Vá em Configurações &gt; Sincronização Nuvem e insira as credenciais do Supabase.</li>
           <li>Cadastre o mesmo projeto Supabase aqui no painel gerencial.</li>

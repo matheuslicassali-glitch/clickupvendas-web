@@ -62,23 +62,21 @@ export default function Relatorios() {
   if (loading) return <div className="flex items-center justify-center h-[60vh]"><div className="loading-spinner" /></div>
 
   return (
-    <div className="space-y-8 animate-fade-in">
-      <div>
-        <h1 className="page-title">Relatorios</h1>
-        <p className="page-subtitle">Analises e graficos do seu negocio</p>
+    <div className="page-wrapper">
+      <div className="page-header">
+        <div className="page-header-left">
+          <h1 className="page-title">Relatorios</h1>
+          <p className="page-subtitle">Analises e graficos do seu negocio</p>
+        </div>
       </div>
 
-      <div className="flex gap-2 flex-wrap">
+      <div className="filter-tabs">
         {[
           { key: 'vendas' as const, label: 'Vendas' },
           { key: 'estoque' as const, label: 'Estoque' },
           { key: 'contador' as const, label: 'Contabil' },
         ].map((t) => (
-          <button key={t.key} onClick={() => setTipo(t.key)} className="px-5 py-2.5 rounded-xl text-[13px] font-medium transition-all duration-200" style={{
-            background: tipo === t.key ? 'rgba(59, 130, 246, 0.15)' : 'var(--bg-card)',
-            color: tipo === t.key ? 'var(--accent-blue-light)' : 'var(--text-muted)',
-            border: `1px solid ${tipo === t.key ? 'rgba(59, 130, 246, 0.3)' : 'var(--border-color)'}`,
-          }}>{t.label}</button>
+          <button key={t.key} onClick={() => setTipo(t.key)} className={`filter-tab ${tipo === t.key ? 'active' : ''}`}>{t.label}</button>
         ))}
       </div>
 
@@ -86,24 +84,20 @@ export default function Relatorios() {
         <div className="flex items-center gap-3">
           <Calendar size={16} style={{ color: 'var(--text-muted)' }} />
           {['dia', 'semana', 'mes'].map((p) => (
-            <button key={p} onClick={() => setPeriodo(p)} className="px-4 py-2 rounded-xl text-[12px] font-medium transition-all" style={{
-              background: periodo === p ? 'rgba(59, 130, 246, 0.15)' : 'var(--bg-card)',
-              color: periodo === p ? 'var(--accent-blue-light)' : 'var(--text-muted)',
-              border: `1px solid ${periodo === p ? 'rgba(59, 130, 246, 0.3)' : 'var(--border-color)'}`,
-            }}>{p === 'dia' ? 'Dia' : p === 'semana' ? 'Semana' : 'Mes'}</button>
+            <button key={p} onClick={() => setPeriodo(p)} className={`filter-tab ${periodo === p ? 'active' : ''}`}>{p === 'dia' ? 'Dia' : p === 'semana' ? 'Semana' : 'Mes'}</button>
           ))}
         </div>
       )}
 
       {tipo === 'contador' && (
         <div className="flex items-end gap-3">
-          <div>
-            <label className="block text-[11px] font-medium mb-1.5" style={{ color: 'var(--text-muted)' }}>Inicio</label>
-            <input type="date" value={dataInicio} onChange={(e) => setDataInicio(e.target.value)} className="search-input" style={{ paddingLeft: '16px' }} />
+          <div className="form-field">
+            <label className="text-[12px] font-medium" style={{ color: 'var(--text-secondary)' }}>Inicio</label>
+            <input type="date" value={dataInicio} onChange={(e) => setDataInicio(e.target.value)} className="page-input" />
           </div>
-          <div>
-            <label className="block text-[11px] font-medium mb-1.5" style={{ color: 'var(--text-muted)' }}>Fim</label>
-            <input type="date" value={dataFim} onChange={(e) => setDataFim(e.target.value)} className="search-input" style={{ paddingLeft: '16px' }} />
+          <div className="form-field">
+            <label className="text-[12px] font-medium" style={{ color: 'var(--text-secondary)' }}>Fim</label>
+            <input type="date" value={dataFim} onChange={(e) => setDataFim(e.target.value)} className="page-input" />
           </div>
         </div>
       )}
@@ -165,8 +159,9 @@ export default function Relatorios() {
             <div className="stat-card stat-card-blue"><p className="text-[12px] font-medium mb-1" style={{ color: 'var(--text-muted)' }}>Produtos</p><p className="text-[24px] font-bold" style={{ color: 'var(--text-primary)' }}>{estoque.length}</p></div>
           </div>
           <div className="gradient-card overflow-hidden">
-            <table className="w-full table-modern">
-              <thead><tr><th>Produto</th><th>Entradas</th><th>Saidas</th><th>Saldo</th></tr></thead>
+            <div className="overflow-x-auto">
+              <table className="w-full table-modern">
+                <thead><tr><th>Produto</th><th>Entradas</th><th>Saidas</th><th>Saldo</th></tr></thead>
               <tbody>
                 {estoque.map((e, i) => (
                   <tr key={i} style={{ animation: `fadeIn 0.3s ease-out ${i * 30}ms forwards`, opacity: 0 }}>
@@ -178,6 +173,7 @@ export default function Relatorios() {
                 ))}
               </tbody>
             </table>
+            </div>
           </div>
         </div>
       )}

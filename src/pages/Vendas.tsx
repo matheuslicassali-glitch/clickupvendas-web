@@ -31,10 +31,12 @@ export default function Vendas() {
   if (loading) return <div className="flex items-center justify-center h-[60vh]"><div className="loading-spinner" /></div>
 
   return (
-    <div className="space-y-8 animate-fade-in">
-      <div>
-        <h1 className="page-title">Vendas</h1>
-        <p className="page-subtitle">Historico completo de vendas realizadas</p>
+    <div className="page-wrapper">
+      <div className="page-header">
+        <div className="page-header-left">
+          <h1 className="page-title">Vendas</h1>
+          <p className="page-subtitle">Historico completo de vendas realizadas</p>
+        </div>
       </div>
 
       <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">

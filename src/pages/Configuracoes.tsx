@@ -27,10 +27,12 @@ export default function Configuracoes() {
   ]
 
   return (
-    <div className="space-y-8 animate-fade-in">
-      <div>
-        <h1 className="page-title">Configuracoes</h1>
-        <p className="page-subtitle">Dados da empresa (somente leitura)</p>
+    <div className="page-wrapper">
+      <div className="page-header">
+        <div className="page-header-left">
+          <h1 className="page-title">Configuracoes</h1>
+          <p className="page-subtitle">Dados da empresa (somente leitura)</p>
+        </div>
       </div>
 
       <div className="gradient-card p-6 lg:p-8">

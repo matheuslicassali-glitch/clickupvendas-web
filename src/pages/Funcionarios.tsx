@@ -21,10 +21,12 @@ export default function Funcionarios() {
   if (loading) return <div className="flex items-center justify-center h-[60vh]"><div className="loading-spinner" /></div>
 
   return (
-    <div className="space-y-8 animate-fade-in">
-      <div>
-        <h1 className="page-title">Funcionarios</h1>
-        <p className="page-subtitle">{funcionarios.length} funcionarios cadastrados</p>
+    <div className="page-wrapper">
+      <div className="page-header">
+        <div className="page-header-left">
+          <h1 className="page-title">Funcionarios</h1>
+          <p className="page-subtitle">{funcionarios.length} funcionarios cadastrados</p>
+        </div>
       </div>
 
       <div className="relative">

@@ -26,10 +26,12 @@ export default function Clientes() {
   if (loading) return <div className="flex items-center justify-center h-[60vh]"><div className="loading-spinner" /></div>
 
   return (
-    <div className="space-y-8 animate-fade-in">
-      <div>
-        <h1 className="page-title">Clientes</h1>
-        <p className="page-subtitle">{clientes.length} clientes cadastrados | {filtrados.length} exibidos</p>
+    <div className="page-wrapper">
+      <div className="page-header">
+        <div className="page-header-left">
+          <h1 className="page-title">Clientes</h1>
+          <p className="page-subtitle">{clientes.length} clientes cadastrados | {filtrados.length} exibidos</p>
+        </div>
       </div>
 
       <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">

@@ -40,13 +40,15 @@ export default function Estoque() {
   if (loading) return <div className="flex items-center justify-center h-[60vh]"><div className="loading-spinner" /></div>
 
   return (
-    <div className="space-y-8 animate-fade-in">
-      <div>
-        <h1 className="page-title">Estoque</h1>
-        <p className="page-subtitle">Controle de produtos e movimentacoes</p>
+    <div className="page-wrapper">
+      <div className="page-header">
+        <div className="page-header-left">
+          <h1 className="page-title">Estoque</h1>
+          <p className="page-subtitle">Controle de produtos e movimentacoes</p>
+        </div>
       </div>
 
-      <div className="flex gap-2">
+      <div className="filter-tabs">
         {[
           { key: 'produtos' as const, label: 'Produtos', count: produtos.length },
           { key: 'movimentacoes' as const, label: 'Movimentacoes', count: movimentacoes.length },
@@ -54,18 +56,10 @@ export default function Estoque() {
           <button
             key={t.key}
             onClick={() => setTab(t.key)}
-            className="flex items-center gap-2 px-5 py-2.5 rounded-xl text-[13px] font-medium transition-all duration-200"
-            style={{
-              background: tab === t.key ? 'rgba(59, 130, 246, 0.15)' : 'var(--bg-card)',
-              color: tab === t.key ? 'var(--accent-blue-light)' : 'var(--text-muted)',
-              border: `1px solid ${tab === t.key ? 'rgba(59, 130, 246, 0.3)' : 'var(--border-color)'}`,
-            }}
+            className={`filter-tab ${tab === t.key ? 'active' : ''}`}
           >
             {t.label}
-            <span className="px-2 py-0.5 rounded-full text-[11px] font-bold" style={{
-              background: tab === t.key ? 'rgba(59, 130, 246, 0.2)' : '#e8eaed',
-              color: tab === t.key ? 'var(--accent-blue-light)' : 'var(--text-muted)',
-            }}>{t.count}</span>
+            <span className="filter-tab-count">{t.count}</span>
           </button>
         ))}
       </div>
@@ -79,8 +73,8 @@ export default function Estoque() {
           <select
             value={filtroTipo}
             onChange={(e) => setFiltroTipo(e.target.value)}
-            className="px-4 py-2.5 rounded-xl text-[13px] font-medium"
-            style={{ background: 'var(--bg-card)', border: '1px solid var(--border-color)', color: 'var(--text-primary)' }}
+            className="px-4 py-2.5 text-[13px] font-medium"
+            style={{ background: 'var(--bg-card)', border: '1px solid var(--border-color)', color: 'var(--text-primary)', borderRadius: 'var(--radius)' }}
           >
             <option value="">Todos Tipos</option>
             <option value="entrada">Entrada</option>

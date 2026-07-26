@@ -1,58 +1,205 @@
 @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
 @import "tailwindcss";
 
+/* ============================================
+   CSS VARIABLES — Design Tokens
+   ============================================ */
 :root {
+  /* Backgrounds */
   --bg-primary: #f0f2f5;
   --bg-sidebar: #364152;
   --bg-card: #ffffff;
   --bg-header: #ffffff;
+  --bg-surface: #f8f9fa;
+  --bg-hover: #f0f2f5;
+
+  /* Borders */
   --border-color: #e8eaed;
+
+  /* Text */
   --text-primary: #2d3436;
   --text-secondary: #636e72;
   --text-muted: #9ca3af;
   --text-sidebar: #b0bec5;
   --text-sidebar-active: #ffffff;
+
+  /* Accent — primary */
   --accent: #3bafda;
   --accent-hover: #2fa3c9;
+
+  /* Accent — semantic */
+  --accent-blue: #3b82f6;
+  --accent-blue-light: #60a5fa;
   --accent-green: #26a69a;
+  --accent-green-light: #4db6ac;
   --accent-red: #ef5350;
+  --accent-red-light: #e57373;
   --accent-amber: #ff9800;
+  --accent-amber-light: #ffb74d;
+  --accent-purple: #7e57c2;
+
+  /* Gradients */
+  --gradient-blue: linear-gradient(135deg, #3b82f6, #6366f1);
+  --gradient-green: linear-gradient(135deg, #10b981, #34d399);
+  --gradient-red: linear-gradient(135deg, #ef4444, #f97316);
+  --gradient-amber: linear-gradient(135deg, #f59e0b, #f97316);
+  --gradient-purple: linear-gradient(135deg, #8b5cf6, #a855f7);
+
+  /* Radius */
   --radius: 8px;
   --radius-lg: 12px;
+
+  /* Shadows */
   --shadow-sm: 0 1px 3px rgba(0, 0, 0, 0.08);
   --shadow-md: 0 2px 8px rgba(0, 0, 0, 0.06);
   --shadow-lg: 0 4px 16px rgba(0, 0, 0, 0.08);
+
+  /* Spacing */
+  --space-xs: 4px;
+  --space-sm: 8px;
+  --space-md: 16px;
+  --space-lg: 24px;
+  --space-xl: 32px;
 }
 
-* {
+/* ============================================
+   GLOBAL RESET & BASE
+   ============================================ */
+*, *::before, *::after {
   margin: 0;
   padding: 0;
   box-sizing: border-box;
 }
 
+html {
+  font-size: 16px;
+  -webkit-text-size-adjust: 100%;
+}
+
 body {
   font-family: 'Inter', system-ui, -apple-system, sans-serif;
-  background: var(--bg-primary);
+  font-size: 14px;
+  line-height: 1.6;
   color: var(--text-primary);
+  background: var(--bg-primary);
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
   overflow: hidden;
 }
 
+h1, h2, h3, h4, h5, h6 {
+  line-height: 1.3;
+  font-weight: 600;
+}
+
+p {
+  margin-bottom: 0.75rem;
+  line-height: 1.6;
+}
+
+p:last-child {
+  margin-bottom: 0;
+}
+
+a {
+  text-decoration: none;
+  color: inherit;
+}
+
+button {
+  cursor: pointer;
+  font-family: inherit;
+  border: none;
+  background: none;
+}
+
+img, svg {
+  display: block;
+  max-width: 100%;
+}
+
+table {
+  border-collapse: separate;
+  border-spacing: 0;
+}
+
+/* ============================================
+   SCROLLBAR
+   ============================================ */
 ::-webkit-scrollbar { width: 5px; height: 5px; }
 ::-webkit-scrollbar-track { background: transparent; }
 ::-webkit-scrollbar-thumb { background: #d1d5db; border-radius: 4px; }
 ::-webkit-scrollbar-thumb:hover { background: #9ca3af; }
 
+/* ============================================
+   ANIMATIONS
+   ============================================ */
 @keyframes fadeIn {
   from { opacity: 0; transform: translateY(6px); }
   to { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes spin {
+  to { transform: rotate(360deg); }
 }
 
 .animate-fade-in {
   animation: fadeIn 0.3s ease forwards;
 }
 
+/* ============================================
+   PAGE STRUCTURE
+   ============================================ */
+
+/* Standard page wrapper — use as root of every page */
+.page-wrapper {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-xl); /* 32px between sections */
+  animation: fadeIn 0.3s ease forwards;
+}
+
+/* Page header — title + action buttons aligned */
+.page-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: var(--space-md);
+}
+
+.page-header-left {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.page-header-right {
+  display: flex;
+  align-items: center;
+  gap: var(--space-sm);
+}
+
+.page-title {
+  font-size: 20px;
+  font-weight: 700;
+  color: var(--text-primary);
+  letter-spacing: -0.01em;
+  line-height: 1.3;
+}
+
+.page-subtitle {
+  font-size: 13px;
+  color: var(--text-muted);
+  line-height: 1.5;
+  margin: 0;
+}
+
+/* ============================================
+   CARDS
+   ============================================ */
+
+/* Primary card container */
 .gradient-card {
   background: var(--bg-card);
   border: 1px solid var(--border-color);
@@ -65,6 +212,75 @@ body {
   box-shadow: var(--shadow-md);
 }
 
+/* Page card — content cards with internal padding */
+.page-card {
+  background: var(--bg-card);
+  border: 1px solid var(--border-color);
+  border-radius: var(--radius-lg);
+  padding: var(--space-lg); /* 24px */
+  box-shadow: var(--shadow-sm);
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-md); /* 16px between children */
+}
+
+/* Stat card */
+.stat-card {
+  background: var(--bg-card);
+  border: 1px solid var(--border-color);
+  border-radius: var(--radius-lg);
+  padding: 20px;
+  box-shadow: var(--shadow-sm);
+  transition: box-shadow 0.2s ease;
+}
+
+.stat-card:hover {
+  box-shadow: var(--shadow-md);
+}
+
+/* Stat card color variants */
+.stat-card-blue {
+  border-left: 3px solid var(--accent-blue);
+}
+
+.stat-card-green {
+  border-left: 3px solid var(--accent-green);
+}
+
+.stat-card-red {
+  border-left: 3px solid var(--accent-red);
+}
+
+.stat-card-purple {
+  border-left: 3px solid var(--accent-purple);
+}
+
+.stat-card-amber {
+  border-left: 3px solid var(--accent-amber);
+}
+
+/* Icon box inside stat cards */
+.icon-box {
+  width: 40px;
+  height: 40px;
+  border-radius: var(--radius);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.icon-box-sm {
+  width: 32px;
+  height: 32px;
+  border-radius: 6px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+/* ============================================
+   TABLES
+   ============================================ */
 .table-modern {
   border-collapse: separate;
   border-spacing: 0;
@@ -78,8 +294,10 @@ body {
   text-transform: uppercase;
   letter-spacing: 0.04em;
   color: var(--text-muted);
-  background: #f8f9fa;
+  background: var(--bg-surface);
   border-bottom: 1px solid var(--border-color);
+  text-align: left;
+  white-space: nowrap;
 }
 
 .table-modern tbody tr {
@@ -87,7 +305,7 @@ body {
 }
 
 .table-modern tbody tr:hover {
-  background: #f8f9fa;
+  background: var(--bg-hover);
 }
 
 .table-modern tbody td {
@@ -101,6 +319,9 @@ body {
   border-bottom: none;
 }
 
+/* ============================================
+   BADGES
+   ============================================ */
 .badge {
   display: inline-flex;
   align-items: center;
@@ -108,6 +329,7 @@ body {
   border-radius: 6px;
   font-size: 11px;
   font-weight: 600;
+  white-space: nowrap;
 }
 
 .badge-success {
@@ -130,32 +352,11 @@ body {
   color: #1565c0;
 }
 
-.stat-card {
-  background: var(--bg-card);
-  border: 1px solid var(--border-color);
-  border-radius: var(--radius-lg);
-  padding: 20px;
-  box-shadow: var(--shadow-sm);
-  transition: box-shadow 0.2s ease;
-}
+/* ============================================
+   FORMS & INPUTS
+   ============================================ */
 
-.stat-card:hover {
-  box-shadow: var(--shadow-md);
-}
-
-.page-title {
-  font-size: 20px;
-  font-weight: 700;
-  color: var(--text-primary);
-  letter-spacing: -0.01em;
-}
-
-.page-subtitle {
-  font-size: 13px;
-  color: var(--text-muted);
-  margin-top: 2px;
-}
-
+/* Search input (with icon prefix) */
 .search-input {
   background: var(--bg-card);
   border: 1px solid var(--border-color);
@@ -166,6 +367,7 @@ body {
   width: 100%;
   transition: border-color 0.15s ease;
   box-shadow: var(--shadow-sm);
+  line-height: 1.5;
 }
 
 .search-input:focus {
@@ -178,28 +380,149 @@ body {
   color: var(--text-muted);
 }
 
+/* Standard input (no icon) */
+.page-input {
+  background: var(--bg-card);
+  border: 1px solid var(--border-color);
+  border-radius: var(--radius);
+  padding: 10px 14px;
+  color: var(--text-primary);
+  font-size: 13px;
+  width: 100%;
+  transition: border-color 0.15s ease;
+  box-shadow: var(--shadow-sm);
+  line-height: 1.5;
+}
+
+.page-input:focus {
+  outline: none;
+  border-color: var(--accent);
+  box-shadow: 0 0 0 3px rgba(59, 175, 218, 0.1);
+}
+
+.page-input::placeholder {
+  color: var(--text-muted);
+}
+
+/* Select */
+select {
+  background: var(--bg-card);
+  border: 1px solid var(--border-color);
+  border-radius: var(--radius);
+  padding: 10px 14px;
+  color: var(--text-primary);
+  font-size: 13px;
+  outline: none;
+  cursor: pointer;
+  line-height: 1.5;
+}
+
+select:focus {
+  border-color: var(--accent);
+}
+
+select option {
+  background: var(--bg-card);
+  color: var(--text-primary);
+}
+
+/* Form field wrapper */
+.form-field {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.form-field label {
+  font-size: 12px;
+  font-weight: 500;
+  color: var(--text-secondary);
+  line-height: 1.4;
+}
+
+/* Button base */
+.btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  padding: 10px 18px;
+  border-radius: var(--radius);
+  font-size: 13px;
+  font-weight: 500;
+  transition: all 0.15s ease;
+  white-space: nowrap;
+  line-height: 1.4;
+}
+
+.btn-primary {
+  background: var(--accent);
+  color: white;
+}
+
+.btn-primary:hover {
+  background: var(--accent-hover);
+}
+
+.btn-danger {
+  background: var(--accent-red);
+  color: white;
+}
+
+.btn-danger:hover {
+  background: #e53935;
+}
+
+.btn-ghost {
+  background: transparent;
+  color: var(--text-secondary);
+  border: 1px solid var(--border-color);
+}
+
+.btn-ghost:hover {
+  background: var(--bg-hover);
+}
+
+/* ============================================
+   EMPTY STATE
+   ============================================ */
 .empty-state {
   display: flex;
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  padding: 40px 20px;
+  padding: 48px 20px;
   text-align: center;
 }
 
-.loading-spinner {
-  width: 32px;
-  height: 32px;
-  border: 3px solid var(--border-color);
-  border-top-color: var(--accent);
-  border-radius: 50%;
-  animation: spin 0.6s linear infinite;
+.empty-state-icon {
+  width: 56px;
+  height: 56px;
+  border-radius: var(--radius-lg);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-bottom: var(--space-md);
+  background: var(--bg-surface);
+  color: var(--text-muted);
 }
 
-@keyframes spin {
-  to { transform: rotate(360deg); }
+.empty-state-title {
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--text-primary);
+  margin-bottom: 4px;
 }
 
+.empty-state-text {
+  font-size: 13px;
+  color: var(--text-muted);
+  margin-bottom: var(--space-md);
+}
+
+/* ============================================
+   DETAIL ROWS
+   ============================================ */
 .detail-row {
   display: flex;
   justify-content: space-between;
@@ -223,6 +546,9 @@ body {
   font-weight: 500;
 }
 
+/* ============================================
+   SECTION TITLES
+   ============================================ */
 .section-title {
   font-size: 14px;
   font-weight: 600;
@@ -230,22 +556,116 @@ body {
   margin-bottom: 14px;
 }
 
-select {
+/* ============================================
+   LOADING
+   ============================================ */
+.loading-spinner {
+  width: 32px;
+  height: 32px;
+  border: 3px solid var(--border-color);
+  border-top-color: var(--accent);
+  border-radius: 50%;
+  animation: spin 0.6s linear infinite;
+}
+
+/* ============================================
+   FILTER TABS
+   ============================================ */
+.filter-tabs {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
+.filter-tab {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 8px 14px;
+  border-radius: var(--radius);
+  font-size: 12px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.15s ease;
   background: var(--bg-card);
   border: 1px solid var(--border-color);
-  border-radius: var(--radius);
-  padding: 8px 12px;
-  color: var(--text-primary);
-  font-size: 13px;
-  outline: none;
-  cursor: pointer;
+  color: var(--text-secondary);
 }
 
-select:focus {
-  border-color: var(--accent);
+.filter-tab:hover {
+  background: var(--bg-hover);
 }
 
-select option {
-  background: var(--bg-card);
-  color: var(--text-primary);
+.filter-tab.active {
+  background: rgba(59, 130, 246, 0.1);
+  border-color: rgba(59, 130, 246, 0.3);
+  color: var(--accent-blue);
+}
+
+.filter-tab-count {
+  padding: 2px 7px;
+  border-radius: 10px;
+  font-size: 10px;
+  font-weight: 700;
+  background: var(--bg-surface);
+  color: var(--text-muted);
+}
+
+.filter-tab.active .filter-tab-count {
+  background: rgba(59, 130, 246, 0.2);
+  color: var(--accent-blue);
+}
+
+/* ============================================
+   STAT GRID (used on pages with stat cards)
+   ============================================ */
+.stat-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: var(--space-md);
+}
+
+.stat-grid-2 {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: var(--space-md);
+}
+
+.stat-grid-4 {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: var(--space-md);
+}
+
+@media (max-width: 640px) {
+  .stat-grid, .stat-grid-2, .stat-grid-4 {
+    grid-template-columns: 1fr;
+  }
+}
+
+/* ============================================
+   UTILITY: Stack layout
+   ============================================ */
+.stack {
+  display: flex;
+  flex-direction: column;
+}
+
+.stack-sm { gap: var(--space-sm); }
+.stack-md { gap: var(--space-md); }
+.stack-lg { gap: var(--space-lg); }
+.stack-xl { gap: var(--space-xl); }
+
+/* ============================================
+   RESPONSIVE HELPERS
+   ============================================ */
+@media (max-width: 768px) {
+  .page-header {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  .page-header-right {
+    width: 100%;
+  }
 }
