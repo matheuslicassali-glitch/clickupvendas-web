@@ -46,69 +46,64 @@ export default function Layout() {
     return () => document.removeEventListener('mousedown', handleClick)
   }, [])
 
+  const currentPage = menuItems.find((m) => m.path === location.pathname)?.label || 'Dashboard'
+
   return (
-    <div className="flex h-screen overflow-hidden bg-[#09090b] text-[#fafafa]">
+    <div className="flex h-screen overflow-hidden" style={{ background: 'var(--bg-primary)', color: 'var(--text-primary)' }}>
+      {/* Mobile Overlay */}
       {sidebarOpen && (
-        <div
-          className="fixed inset-0 z-40 bg-black/60 backdrop-blur-sm lg:hidden"
-          onClick={() => setSidebarOpen(false)}
-        />
+        <div className="fixed inset-0 z-40 bg-black/40 lg:hidden" onClick={() => setSidebarOpen(false)} />
       )}
 
       {/* Sidebar */}
       <aside
-        className={`fixed lg:static inset-y-0 left-0 z-50 w-[260px] flex flex-col bg-[#0b0b0e] border-r border-[#27272a] transition-transform duration-200 ease-out lg:translate-x-0 ${
+        className={`fixed lg:static inset-y-0 left-0 z-50 w-[250px] flex flex-col transition-transform duration-200 ease-out lg:translate-x-0 ${
           sidebarOpen ? 'translate-x-0' : '-translate-x-full'
         }`}
+        style={{ background: 'var(--bg-sidebar)' }}
       >
-        {/* Brand / Logo */}
-        <div className="flex items-center gap-3 h-[70px] px-6 border-b border-[#27272a]">
-          <div className="w-8 h-8 rounded-lg bg-indigo-600 flex items-center justify-center shadow-sm">
+        {/* Brand */}
+        <div className="flex items-center gap-3 h-[64px] px-5 border-b border-white/10">
+          <div className="w-8 h-8 rounded-lg bg-[#3bafda] flex items-center justify-center">
             <Layers size={18} className="text-white" />
           </div>
-          <div>
-            <h1 className="text-[14px] font-semibold tracking-tight text-white">ClickUp Vendas</h1>
-            <p className="text-[11px] text-[#71717a]">Painel Gerencial</p>
-          </div>
+          <h1 className="text-[15px] font-semibold text-white tracking-tight">ClickUp Vendas</h1>
         </div>
 
         {/* Store Selector */}
         {lojas.length > 0 && (
-          <div className="p-3 border-b border-[#27272a] relative" ref={dropdownRef}>
+          <div className="px-3 py-3 border-b border-white/10 relative" ref={dropdownRef}>
             <button
               onClick={() => setStoreDropdownOpen(!storeDropdownOpen)}
-              className="w-full flex items-center gap-3 px-3 py-2 rounded-lg bg-[#18181b] border border-[#27272a] hover:border-[#3f3f46] transition-colors text-left"
+              className="w-full flex items-center gap-2.5 px-3 py-2 rounded-lg bg-white/5 hover:bg-white/10 transition-colors text-left"
             >
-              <div className="w-6 h-6 rounded bg-indigo-500/10 text-indigo-400 flex items-center justify-center text-xs font-semibold">
-                <Store size={14} />
-              </div>
+              <Store size={15} className="text-[#3bafda]" />
               <div className="flex-1 min-w-0">
-                <p className="text-[12px] font-medium truncate text-white">{lojaAtiva?.nome || 'Selecionar loja'}</p>
-                <p className="text-[10px] text-[#71717a] truncate">Multi-loja ativo</p>
+                <p className="text-[12px] font-medium text-white truncate">{lojaAtiva?.nome || 'Selecionar loja'}</p>
               </div>
-              <ChevronDown size={14} className={`text-[#71717a] transition-transform ${storeDropdownOpen ? 'rotate-180' : ''}`} />
+              <ChevronDown size={14} className={`text-[#90a4ae] transition-transform ${storeDropdownOpen ? 'rotate-180' : ''}`} />
             </button>
 
             {storeDropdownOpen && (
-              <div className="absolute left-3 right-3 top-full mt-1 bg-[#121215] border border-[#27272a] rounded-lg shadow-xl overflow-hidden z-50">
+              <div className="absolute left-3 right-3 top-full mt-1 bg-white rounded-lg shadow-lg border border-[#e8eaed] overflow-hidden z-50">
                 <div className="p-1">
                   {lojas.map((loja) => (
                     <button
                       key={loja.id}
                       onClick={() => { selecionar(loja.id); setStoreDropdownOpen(false) }}
-                      className={`w-full flex items-center gap-2.5 px-3 py-2 rounded text-left text-[12px] font-medium transition-colors ${
-                        lojaAtiva?.id === loja.id ? 'bg-indigo-600/10 text-indigo-400' : 'text-[#a1a1aa] hover:bg-white/[0.03] hover:text-white'
+                      className={`w-full flex items-center gap-2 px-3 py-2 rounded text-left text-[13px] font-medium transition-colors ${
+                        lojaAtiva?.id === loja.id ? 'bg-[#e3f2fd] text-[#1565c0]' : 'text-[#636e72] hover:bg-[#f5f7fa]'
                       }`}
                     >
-                      <span className="w-1.5 h-1.5 rounded-full bg-current" />
+                      <span className="w-2 h-2 rounded-full bg-current" />
                       <span className="truncate">{loja.nome}</span>
                     </button>
                   ))}
-                  <div className="border-t border-[#27272a] my-1" />
+                  <div className="border-t border-[#e8eaed] my-1" />
                   <NavLink
                     to="/lojas"
                     onClick={() => setStoreDropdownOpen(false)}
-                    className="flex items-center gap-2 px-3 py-2 rounded text-[12px] font-medium text-indigo-400 hover:bg-indigo-600/10"
+                    className="flex items-center gap-2 px-3 py-2 rounded text-[13px] font-medium text-[#3bafda] hover:bg-[#e3f2fd]"
                   >
                     <Store size={14} />
                     Gerenciar Lojas
@@ -121,7 +116,7 @@ export default function Layout() {
 
         {/* Navigation */}
         <nav className="flex-1 overflow-y-auto px-3 py-4 space-y-0.5">
-          <p className="px-3 pb-2 text-[10px] font-semibold uppercase tracking-wider text-[#71717a]">Menu</p>
+          <p className="px-3 pb-2 text-[10px] font-semibold uppercase tracking-wider text-[#78909c]">Menu</p>
           {menuItems.map((item) => {
             const Icon = item.icon
             const isActive = location.pathname === item.path
@@ -130,86 +125,78 @@ export default function Layout() {
                 key={item.path}
                 to={item.path}
                 onClick={() => setSidebarOpen(false)}
-                className={`flex items-center gap-3 px-3 py-2 rounded-lg text-[13px] font-medium transition-colors ${
+                className={`flex items-center gap-3 px-3 py-2.5 rounded-lg text-[13px] font-medium transition-all ${
                   isActive
-                    ? 'bg-[#18181b] text-white font-semibold border border-[#27272a]'
-                    : 'text-[#a1a1aa] hover:bg-[#18181b]/50 hover:text-white'
+                    ? 'bg-white text-[#3bafda] shadow-sm'
+                    : 'text-[#b0bec5] hover:bg-white/5 hover:text-white'
                 }`}
               >
-                <Icon size={16} className={isActive ? 'text-indigo-400' : 'text-[#71717a]'} />
+                <Icon size={16} />
                 <span>{item.label}</span>
               </NavLink>
             )
           })}
         </nav>
-
-        {/* Sidebar Footer */}
-        <div className="p-3 border-t border-[#27272a]">
-          <div className="flex items-center gap-3 px-3 py-2 rounded-lg bg-[#121215] border border-[#27272a]">
-            <div className="w-7 h-7 rounded bg-[#27272a] flex items-center justify-center text-[11px] font-bold text-white">
-              CU
-            </div>
-            <div className="flex-1 min-w-0">
-              <p className="text-[12px] font-medium text-white truncate">ClickUp Vendas</p>
-              <p className="text-[10px] text-[#71717a]">Modo Leitura</p>
-            </div>
-            <span className="w-2 h-2 rounded-full bg-emerald-500" title="Online" />
-          </div>
-        </div>
       </aside>
 
-      {/* Main Content Area */}
-      <div className="flex-1 flex flex-col overflow-hidden bg-[#09090b]">
+      {/* Main Content */}
+      <div className="flex-1 flex flex-col overflow-hidden">
         {/* Header */}
-        <header className="flex items-center h-[70px] px-6 lg:px-8 bg-[#09090b] border-b border-[#27272a]">
+        <header
+          className="flex items-center h-[64px] px-6 lg:px-8 border-b"
+          style={{ background: 'var(--bg-header)', borderColor: 'var(--border-color)' }}
+        >
           <button
             onClick={() => setSidebarOpen(true)}
-            className="lg:hidden mr-4 p-2 rounded-lg text-[#a1a1aa] hover:bg-[#18181b]"
+            className="lg:hidden mr-4 p-2 rounded-lg hover:bg-[#f0f2f5] transition-colors"
+            style={{ color: 'var(--text-secondary)' }}
           >
             <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="18" x2="21" y2="18"/></svg>
           </button>
 
-          <h2 className="text-[16px] font-semibold text-white">
-            {menuItems.find((m) => m.path === location.pathname)?.label || 'Dashboard'}
+          <h2 className="text-[16px] font-semibold" style={{ color: 'var(--text-primary)' }}>
+            {currentPage}
           </h2>
 
           <div className="ml-auto flex items-center gap-3">
             {!lojaAtiva && lojas.length === 0 && (
               <NavLink
                 to="/lojas"
-                className="flex items-center gap-2 px-3.5 py-1.5 rounded-lg bg-indigo-600 hover:bg-indigo-500 text-white text-[12px] font-medium transition-colors shadow-sm"
+                className="flex items-center gap-2 px-4 py-2 rounded-lg text-[13px] font-medium text-white transition-colors"
+                style={{ background: 'var(--accent)' }}
               >
                 <Store size={14} />
                 Configurar Loja
               </NavLink>
             )}
             {lojaAtiva && (
-              <div className="flex items-center gap-2 px-3 py-1.5 rounded-lg bg-[#121215] border border-[#27272a] text-[12px]">
-                <span className="w-2 h-2 rounded-full bg-emerald-500" />
-                <span className="text-[#a18cf8] font-medium text-emerald-400">Sincronizado</span>
+              <div className="flex items-center gap-2 px-3 py-1.5 rounded-lg text-[12px] font-medium bg-[#e8f5e9] text-[#2e7d32]">
+                <span className="w-1.5 h-1.5 rounded-full bg-[#26a69a]" />
+                Sincronizado
               </div>
             )}
-            <div className="hidden sm:flex items-center gap-2 px-3 py-1.5 rounded-lg bg-[#121215] border border-[#27272a] text-[12px] text-[#71717a]">
-              <span>{new Date().toLocaleDateString('pt-BR', { weekday: 'short', day: '2-digit', month: 'short' })}</span>
+            <div className="hidden sm:flex items-center gap-2 px-3 py-1.5 rounded-lg text-[12px]" style={{ background: '#f5f7fa', color: 'var(--text-secondary)' }}>
+              {new Date().toLocaleDateString('pt-BR', { weekday: 'short', day: '2-digit', month: 'short' })}
             </div>
           </div>
         </header>
 
         {/* Page Content */}
-        <main className="flex-1 overflow-y-auto p-6 lg:p-8 bg-[#09090b]">
+        <main className="flex-1 overflow-y-auto p-6 lg:p-8" style={{ background: 'var(--bg-primary)' }}>
           {location.pathname === '/lojas' ? (
             <Outlet />
           ) : !lojaAtiva && lojas.length === 0 ? (
             <div className="flex items-center justify-center h-full">
-              <div className="max-w-md w-full bg-[#121215] border border-[#27272a] rounded-2xl p-8 text-center shadow-2xl">
-                <div className="w-12 h-12 rounded-xl bg-indigo-600/10 border border-indigo-500/20 flex items-center justify-center mx-auto mb-4 text-indigo-400">
-                  <Store size={22} />
+              <div className="bg-white rounded-xl border border-[#e8eaed] shadow-sm p-8 text-center max-w-md w-full">
+                <div className="w-14 h-14 rounded-xl bg-[#e3f2fd] flex items-center justify-center mx-auto mb-4">
+                  <Store size={24} className="text-[#1565c0]" />
                 </div>
-                <h3 className="text-lg font-semibold text-white mb-1">Nenhuma loja configurada</h3>
-                <p className="text-[13px] text-[#71717a] mb-6">Adicione os dados do Supabase da sua loja para visualizar as vendas e o estoque em tempo real.</p>
+                <h3 className="text-[16px] font-semibold mb-1" style={{ color: 'var(--text-primary)' }}>Nenhuma loja configurada</h3>
+                <p className="text-[13px] mb-6" style={{ color: 'var(--text-muted)' }}>Adicione os dados do Supabase da sua loja para visualizar as vendas e o estoque em tempo real.</p>
                 <NavLink
                   to="/lojas"
-                  className="inline-flex items-center justify-center gap-2 w-full py-2.5 rounded-lg bg-indigo-600 hover:bg-indigo-500 text-white text-[13px] font-medium transition-colors shadow-sm"
+                  className="inline-flex items-center justify-center gap-2 w-full py-2.5 rounded-lg text-white text-[13px] font-medium transition-colors"
+                  style={{ background: 'var(--accent)' }}
                 >
                   <Store size={16} />
                   Configurar Primeira Loja
@@ -219,8 +206,8 @@ export default function Layout() {
           ) : !lojaAtiva ? (
             <div className="flex items-center justify-center h-full">
               <div className="text-center">
-                <p className="text-sm font-medium text-white mb-1">Nenhuma loja selecionada</p>
-                <p className="text-xs text-[#71717a]">Selecione uma loja no menu lateral para visualizar os dados.</p>
+                <p className="text-[14px] font-medium mb-1" style={{ color: 'var(--text-primary)' }}>Nenhuma loja selecionada</p>
+                <p className="text-[13px]" style={{ color: 'var(--text-muted)' }}>Selecione uma loja no menu lateral.</p>
               </div>
             </div>
           ) : (

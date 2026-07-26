@@ -65,7 +65,7 @@ export default function Fiado() {
           </div>
           <div className="p-4 space-y-2">
             {clientesComDebito.map((c, i) => (
-              <div key={c.ID} className="flex items-center justify-between p-4 rounded-xl transition-all hover:bg-white/[0.02]" style={{ background: 'var(--bg-surface)', animation: `fadeIn 0.3s ease-out ${i * 50}ms forwards`, opacity: 0 }}>
+              <div key={c.ID} className="flex items-center justify-between p-4 rounded-xl transition-all hover:bg-[#f0f2f5]" style={{ background: 'var(--bg-surface)', animation: `fadeIn 0.3s ease-out ${i * 50}ms forwards`, opacity: 0 }}>
                 <div className="flex items-center gap-3">
                   <div className="w-10 h-10 rounded-xl flex items-center justify-center text-[13px] font-bold" style={{ background: 'rgba(239, 68, 68, 0.12)', color: 'var(--accent-red-light)' }}>
                     {c.Nome?.charAt(0)?.toUpperCase() || '?'}

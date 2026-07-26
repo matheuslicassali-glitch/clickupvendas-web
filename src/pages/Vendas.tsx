@@ -96,7 +96,7 @@ export default function Vendas() {
                     </span>
                   </td>
                   <td style={{ textAlign: 'right' }}>
-                    <button onClick={() => setShowDetail(venda)} className="p-2 rounded-lg hover:bg-white/5 transition-colors" style={{ color: 'var(--accent-blue)' }}>
+                    <button onClick={() => setShowDetail(venda)} className="p-2 rounded-lg hover:bg-[#f0f2f5] transition-colors" style={{ color: 'var(--accent-blue)' }}>
                       <Eye size={16} />
                     </button>
                   </td>
@@ -120,7 +120,7 @@ export default function Vendas() {
                   <p className="text-[12px]" style={{ color: 'var(--text-muted)' }}>{new Date(showDetail.DataVenda).toLocaleString('pt-BR')}</p>
                 </div>
               </div>
-              <button onClick={() => setShowDetail(null)} className="p-2 rounded-lg hover:bg-white/5" style={{ color: 'var(--text-muted)' }}>
+              <button onClick={() => setShowDetail(null)} className="p-2 rounded-lg hover:bg-[#f0f2f5]" style={{ color: 'var(--text-muted)' }}>
                 <X size={20} />
               </button>
             </div>

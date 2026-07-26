@@ -38,7 +38,7 @@ export default function Configuracoes() {
           {fields.map((field, i) => {
             const Icon = field.icon
             return (
-              <div key={field.label} className="p-4 rounded-xl transition-all hover:bg-white/[0.02]" style={{ background: 'var(--bg-surface)', animation: `fadeIn 0.3s ease-out ${i * 50}ms forwards`, opacity: 0 }}>
+              <div key={field.label} className="p-4 rounded-xl transition-all hover:bg-[#f0f2f5]" style={{ background: 'var(--bg-surface)', animation: `fadeIn 0.3s ease-out ${i * 50}ms forwards`, opacity: 0 }}>
                 <div className="flex items-center gap-3 mb-2">
                   <div className="w-8 h-8 rounded-lg flex items-center justify-center" style={{ background: 'rgba(59, 130, 246, 0.12)' }}>
                     <Icon size={16} style={{ color: 'var(--accent-blue)' }} />

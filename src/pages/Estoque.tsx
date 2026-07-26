@@ -63,7 +63,7 @@ export default function Estoque() {
           >
             {t.label}
             <span className="px-2 py-0.5 rounded-full text-[11px] font-bold" style={{
-              background: tab === t.key ? 'rgba(59, 130, 246, 0.2)' : 'rgba(255,255,255,0.05)',
+              background: tab === t.key ? 'rgba(59, 130, 246, 0.2)' : '#e8eaed',
               color: tab === t.key ? 'var(--accent-blue-light)' : 'var(--text-muted)',
             }}>{t.count}</span>
           </button>

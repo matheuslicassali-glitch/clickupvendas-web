@@ -49,7 +49,7 @@ export default function Caixas() {
           {sessoes.map((sessao, i) => (
             <div key={sessao.ID} className="gradient-card overflow-hidden" style={{ animation: `fadeIn 0.3s ease-out ${i * 50}ms forwards`, opacity: 0 }}>
               <div
-                className="flex items-center justify-between p-5 cursor-pointer transition-all duration-200 hover:bg-white/[0.02]"
+                className="flex items-center justify-between p-5 cursor-pointer transition-all duration-200 hover:bg-[#f0f2f5]"
                 onClick={() => toggleExpand(sessao.ID)}
               >
                 <div className="flex items-center gap-4">
@@ -112,7 +112,7 @@ export default function Caixas() {
                       </div>
                       <div className="space-y-2">
                         {movimentacoes.map((mov) => (
-                          <div key={mov.ID} className="flex items-center justify-between p-3 rounded-xl transition-all hover:bg-white/[0.02]" style={{ background: 'var(--bg-surface)' }}>
+                          <div key={mov.ID} className="flex items-center justify-between p-3 rounded-xl transition-all hover:bg-[#f0f2f5]" style={{ background: 'var(--bg-surface)' }}>
                             <div className="flex items-center gap-3">
                               <div className="w-9 h-9 rounded-xl flex items-center justify-center" style={{ background: ['entrada', 'suprimento'].includes(mov.Tipo) ? 'rgba(16, 185, 129, 0.12)' : 'rgba(239, 68, 68, 0.12)' }}>
                                 {['entrada', 'suprimento'].includes(mov.Tipo) ? <Plus size={14} style={{ color: 'var(--accent-green)' }} /> : <Minus size={14} style={{ color: 'var(--accent-red)' }} />}

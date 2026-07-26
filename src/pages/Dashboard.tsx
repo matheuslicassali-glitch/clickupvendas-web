@@ -56,65 +56,61 @@ export default function Dashboard() {
   }
 
   const cards = [
-    { label: 'Vendas Hoje', value: stats.vendasHoje, icon: ShoppingCart, gradient: 'linear-gradient(135deg, #667eea, #764ba2)', cardClass: 'stat-card-blue', change: '+12%', positive: true },
-    { label: 'Faturamento Hoje', value: `R$ ${stats.valorHoje.toFixed(2)}`, icon: DollarSign, gradient: 'linear-gradient(135deg, #11998e, #38ef7d)', cardClass: 'stat-card-green', change: '+8%', positive: true },
-    { label: 'Total Vendas', value: stats.totalVendas, icon: TrendingUp, gradient: 'linear-gradient(135deg, #a18cd1, #fbc2eb)', cardClass: 'stat-card-purple', change: '+23%', positive: true },
-    { label: 'Faturamento', value: `R$ ${stats.valorTotal.toFixed(2)}`, icon: DollarSign, gradient: 'linear-gradient(135deg, #f7971e, #ffd200)', cardClass: 'stat-card-amber', change: '+15%', positive: true },
-    { label: 'Produtos', value: stats.totalProdutos, icon: Package, gradient: 'linear-gradient(135deg, #4facfe, #00f2fe)', cardClass: 'stat-card-cyan', change: '+5', positive: true },
-    { label: 'Clientes', value: stats.totalClientes, icon: Users, gradient: 'linear-gradient(135deg, #fa709a, #fee140)', cardClass: 'stat-card-purple', change: '+3', positive: true },
+    { label: 'Vendas Hoje', value: stats.vendasHoje, icon: ShoppingCart, color: '#3bafda', bgColor: '#e3f2fd', change: '+12%', positive: true },
+    { label: 'Faturamento Hoje', value: `R$ ${stats.valorHoje.toFixed(2)}`, icon: DollarSign, color: '#26a69a', bgColor: '#e0f2f1', change: '+8%', positive: true },
+    { label: 'Total Vendas', value: stats.totalVendas, icon: TrendingUp, color: '#7e57c2', bgColor: '#ede7f6', change: '+23%', positive: true },
+    { label: 'Faturamento', value: `R$ ${stats.valorTotal.toFixed(2)}`, icon: DollarSign, color: '#ff9800', bgColor: '#fff3e0', change: '+15%', positive: true },
+    { label: 'Produtos', value: stats.totalProdutos, icon: Package, color: '#42a5f5', bgColor: '#e3f2fd', change: '+5', positive: true },
+    { label: 'Clientes', value: stats.totalClientes, icon: Users, color: '#ec407a', bgColor: '#fce4ec', change: '+3', positive: true },
   ]
 
   return (
-    <div className="space-y-8 animate-fade-in">
+    <div className="space-y-6 animate-fade-in">
       <div className="flex items-end justify-between">
         <div>
           <h1 className="page-title">Dashboard</h1>
-          <p className="page-subtitle">Visao geral do seu negocio em tempo real</p>
+          <p className="page-subtitle">Visão geral do seu negócio em tempo real</p>
         </div>
-        <div className="hidden md:flex items-center gap-2 px-4 py-2 rounded-2xl" style={{ background: 'rgba(255,255,255,0.03)', border: '1px solid var(--border-color)' }}>
-          <Activity size={14} style={{ color: '#38ef7d' }} />
-          <span className="text-[12px] font-medium" style={{ color: '#64748b' }}>Tempo real</span>
+        <div className="hidden md:flex items-center gap-2 px-3 py-1.5 rounded-lg bg-[#e8f5e9] text-[12px] font-medium text-[#2e7d32]">
+          <Activity size={14} />
+          Tempo real
         </div>
       </div>
 
       {/* Stat Cards */}
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-6 gap-4">
-        {cards.map((card, i) => {
+        {cards.map((card) => {
           const Icon = card.icon
           return (
-            <div key={card.label} className={`stat-card ${card.cardClass}`} style={{ animationDelay: `${i * 60}ms` }}>
-              <div className="flex items-start justify-between mb-4">
-                <div className="icon-box" style={{ background: card.gradient, boxShadow: `0 4px 20px ${card.gradient.match(/#[0-9a-f]+/i)?.[0]}33` }}>
-                  <Icon size={20} className="text-white" />
+            <div key={card.label} className="stat-card">
+              <div className="flex items-start justify-between mb-3">
+                <div className="w-10 h-10 rounded-lg flex items-center justify-center" style={{ background: card.bgColor }}>
+                  <Icon size={18} style={{ color: card.color }} />
                 </div>
-                <span className="flex items-center gap-0.5 text-[11px] font-bold px-2 py-0.5 rounded-full" style={{
-                  background: card.positive ? 'rgba(56, 239, 125, 0.1)' : 'rgba(239, 68, 68, 0.1)',
-                  color: card.positive ? '#38ef7d' : '#f87171',
-                  border: `1px solid ${card.positive ? 'rgba(56, 239, 125, 0.2)' : 'rgba(239, 68, 68, 0.2)'}`,
-                }}>
+                <span className="flex items-center gap-0.5 text-[11px] font-semibold px-2 py-0.5 rounded-full bg-[#e8f5e9] text-[#2e7d32]">
                   {card.positive ? <ArrowUpRight size={12} /> : <ArrowDownRight size={12} />}
                   {card.change}
                 </span>
               </div>
-              <p className="text-[11px] font-semibold uppercase tracking-wider mb-1" style={{ color: '#475569' }}>{card.label}</p>
-              <p className="text-[20px] font-extrabold tracking-tight" style={{ color: '#f1f5f9' }}>{card.value}</p>
+              <p className="text-[11px] font-medium uppercase tracking-wider mb-1" style={{ color: 'var(--text-muted)' }}>{card.label}</p>
+              <p className="text-[18px] font-bold" style={{ color: 'var(--text-primary)' }}>{card.value}</p>
             </div>
           )
         })}
       </div>
 
       {/* Content Grid */}
-      <div className="grid grid-cols-1 lg:grid-cols-5 gap-6">
+      <div className="grid grid-cols-1 lg:grid-cols-5 gap-5">
         {/* Vendas Recentes */}
         <div className="lg:col-span-3 gradient-card">
-          <div className="p-6 flex items-center justify-between" style={{ borderBottom: '1px solid var(--border-color)' }}>
+          <div className="p-5 flex items-center justify-between border-b border-[#e8eaed]">
             <div className="flex items-center gap-3">
-              <div className="w-10 h-10 rounded-2xl flex items-center justify-center" style={{ background: 'linear-gradient(135deg, #667eea, #764ba2)', boxShadow: '0 4px 12px rgba(102, 126, 234, 0.2)' }}>
-                <Zap size={18} className="text-white" />
+              <div className="w-9 h-9 rounded-lg flex items-center justify-center bg-[#e3f2fd]">
+                <Zap size={16} className="text-[#1565c0]" />
               </div>
               <div>
-                <h3 className="font-bold text-[15px]" style={{ color: '#f1f5f9' }}>Vendas Recentes</h3>
-                <p className="text-[12px]" style={{ color: '#475569' }}>Ultimas vendas realizadas</p>
+                <h3 className="font-semibold text-[14px] text-[#2d3436]">Vendas Recentes</h3>
+                <p className="text-[11px]" style={{ color: 'var(--text-muted)' }}>Últimas vendas realizadas</p>
               </div>
             </div>
             <span className="badge badge-success">{vendasRecentes.length} vendas</span>
@@ -122,39 +118,27 @@ export default function Dashboard() {
           <div className="p-3">
             {vendasRecentes.length === 0 ? (
               <div className="empty-state py-10">
-                <div className="w-16 h-16 rounded-3xl flex items-center justify-center mb-4" style={{ background: 'rgba(255,255,255,0.03)' }}>
-                  <ShoppingCart size={28} style={{ color: '#334155' }} />
+                <div className="w-14 h-14 rounded-xl flex items-center justify-center mb-3 bg-[#f5f7fa]">
+                  <ShoppingCart size={22} style={{ color: '#9ca3af' }} />
                 </div>
-                <p className="text-[13px] font-medium" style={{ color: '#475569' }}>Nenhuma venda encontrada</p>
+                <p className="text-[13px] font-medium" style={{ color: 'var(--text-muted)' }}>Nenhuma venda encontrada</p>
               </div>
             ) : (
-              <div className="space-y-1.5">
-                {vendasRecentes.map((venda, i) => (
-                  <div
-                    key={venda.ID}
-                    className="flex items-center justify-between p-4 rounded-2xl transition-all duration-300 hover:bg-white/[0.03] cursor-default"
-                    style={{ animation: `fadeIn 0.4s cubic-bezier(0.16, 1, 0.3, 1) ${i * 50}ms forwards`, opacity: 0 }}
-                  >
-                    <div className="flex items-center gap-4">
-                      <div className="w-11 h-11 rounded-2xl flex items-center justify-center text-[13px] font-bold" style={{ background: 'linear-gradient(135deg, rgba(102, 126, 234, 0.15), rgba(118, 75, 162, 0.15))', color: '#a78bfa' }}>
+              <div className="space-y-1">
+                {vendasRecentes.map((venda) => (
+                  <div key={venda.ID} className="flex items-center justify-between p-3 rounded-lg hover:bg-[#f0f2f5] transition-colors">
+                    <div className="flex items-center gap-3">
+                      <div className="w-9 h-9 rounded-lg flex items-center justify-center text-[11px] font-bold bg-[#e3f2fd] text-[#1565c0]">
                         #{venda.ID}
                       </div>
                       <div>
-                        <p className="text-[13px] font-semibold" style={{ color: '#e2e8f0' }}>
-                          {venda.Cliente?.Nome || 'Cliente avulso'}
-                        </p>
-                        <p className="text-[11px] font-medium" style={{ color: '#475569' }}>
-                          {venda.FormaPagamento} {venda.Vendedor ? `• ${venda.Vendedor}` : ''}
-                        </p>
+                        <p className="text-[13px] font-medium text-[#2d3436]">{venda.Cliente?.Nome || 'Cliente avulso'}</p>
+                        <p className="text-[11px]" style={{ color: 'var(--text-muted)' }}>{venda.FormaPagamento} {venda.Vendedor ? `• ${venda.Vendedor}` : ''}</p>
                       </div>
                     </div>
                     <div className="text-right">
-                      <p className="text-[14px] font-bold" style={{ color: '#38ef7d' }}>
-                        +R$ {(venda.ValorTotal || 0).toFixed(2)}
-                      </p>
-                      <p className="text-[11px] font-medium" style={{ color: '#475569' }}>
-                        {new Date(venda.DataVenda).toLocaleDateString('pt-BR')}
-                      </p>
+                      <p className="text-[13px] font-semibold text-[#2e7d32]">+R$ {(venda.ValorTotal || 0).toFixed(2)}</p>
+                      <p className="text-[11px]" style={{ color: 'var(--text-muted)' }}>{new Date(venda.DataVenda).toLocaleDateString('pt-BR')}</p>
                     </div>
                   </div>
                 ))}
@@ -165,14 +149,14 @@ export default function Dashboard() {
 
         {/* Estoque Baixo */}
         <div className="lg:col-span-2 gradient-card">
-          <div className="p-6 flex items-center justify-between" style={{ borderBottom: '1px solid var(--border-color)' }}>
+          <div className="p-5 flex items-center justify-between border-b border-[#e8eaed]">
             <div className="flex items-center gap-3">
-              <div className="w-10 h-10 rounded-2xl flex items-center justify-center" style={{ background: 'linear-gradient(135deg, #ee0979, #ff6a00)', boxShadow: '0 4px 12px rgba(238, 9, 121, 0.2)' }}>
-                <AlertTriangle size={18} className="text-white" />
+              <div className="w-9 h-9 rounded-lg flex items-center justify-center bg-[#fff3e0]">
+                <AlertTriangle size={16} className="text-[#e65100]" />
               </div>
               <div>
-                <h3 className="font-bold text-[15px]" style={{ color: '#f1f5f9' }}>Estoque Baixo</h3>
-                <p className="text-[12px]" style={{ color: '#475569' }}>Produtos criticos</p>
+                <h3 className="font-semibold text-[14px] text-[#2d3436]">Estoque Baixo</h3>
+                <p className="text-[11px]" style={{ color: 'var(--text-muted)' }}>Produtos críticos</p>
               </div>
             </div>
             {produtosEstoqueBaixo.length > 0 && (
@@ -182,27 +166,23 @@ export default function Dashboard() {
           <div className="p-3">
             {produtosEstoqueBaixo.length === 0 ? (
               <div className="empty-state py-10">
-                <div className="w-16 h-16 rounded-3xl flex items-center justify-center mb-4" style={{ background: 'rgba(56, 239, 125, 0.08)' }}>
-                  <Target size={28} style={{ color: '#38ef7d' }} />
+                <div className="w-14 h-14 rounded-xl flex items-center justify-center mb-3 bg-[#e8f5e9]">
+                  <Target size={22} className="text-[#2e7d32]" />
                 </div>
-                <p className="text-[13px] font-semibold" style={{ color: '#38ef7d' }}>Todos ok!</p>
-                <p className="text-[11px] mt-1" style={{ color: '#475569' }}>Nenhum produto com estoque baixo</p>
+                <p className="text-[13px] font-semibold text-[#2e7d32]">Todos ok!</p>
+                <p className="text-[11px] mt-1" style={{ color: 'var(--text-muted)' }}>Nenhum produto com estoque baixo</p>
               </div>
             ) : (
-              <div className="space-y-1.5">
-                {produtosEstoqueBaixo.map((produto, i) => (
-                  <div
-                    key={produto.ID}
-                    className="flex items-center justify-between p-4 rounded-2xl transition-all duration-300 hover:bg-white/[0.03] cursor-default"
-                    style={{ animation: `fadeIn 0.4s cubic-bezier(0.16, 1, 0.3, 1) ${i * 50}ms forwards`, opacity: 0 }}
-                  >
+              <div className="space-y-1">
+                {produtosEstoqueBaixo.map((produto) => (
+                  <div key={produto.ID} className="flex items-center justify-between p-3 rounded-lg hover:bg-[#f0f2f5] transition-colors">
                     <div className="flex items-center gap-3">
-                      <div className="w-10 h-10 rounded-2xl flex items-center justify-center" style={{ background: produto.Estoque === 0 ? 'rgba(239, 68, 68, 0.1)' : 'rgba(245, 158, 11, 0.1)' }}>
-                        <Package size={16} style={{ color: produto.Estoque === 0 ? '#f87171' : '#fbbf24' }} />
+                      <div className="w-9 h-9 rounded-lg flex items-center justify-center" style={{ background: produto.Estoque === 0 ? '#ffebee' : '#fff3e0' }}>
+                        <Package size={15} style={{ color: produto.Estoque === 0 ? '#c62828' : '#e65100' }} />
                       </div>
                       <div>
-                        <p className="text-[13px] font-semibold" style={{ color: '#e2e8f0' }}>{produto.Nome}</p>
-                        <p className="text-[11px] font-medium" style={{ color: '#475569' }}>Min: {produto.EstoqueMinimo || 5} {produto.Unidade || 'un'}</p>
+                        <p className="text-[13px] font-medium text-[#2d3436]">{produto.Nome}</p>
+                        <p className="text-[11px]" style={{ color: 'var(--text-muted)' }}>Min: {produto.EstoqueMinimo || 5} {produto.Unidade || 'un'}</p>
                       </div>
                     </div>
                     <span className={`badge ${produto.Estoque === 0 ? 'badge-danger' : 'badge-warning'}`}>
