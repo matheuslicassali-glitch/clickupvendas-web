@@ -141,7 +141,8 @@ export default function Layout() {
 
       {/* Main Content */}
       <div className="flex-1 flex flex-col overflow-hidden">
-        {/* Header */}
+        {/* Header - hidden when no store configured (empty state has its own) */}
+        {lojaAtiva || lojas.length > 0 || location.pathname === '/lojas' ? (
         <header
           className="flex items-center h-[64px] px-6 lg:px-8 border-b"
           style={{ background: 'var(--bg-header)', borderColor: 'var(--border-color)' }}
@@ -159,16 +160,6 @@ export default function Layout() {
           </h2>
 
           <div className="ml-auto flex items-center gap-3">
-            {!lojaAtiva && lojas.length === 0 && (
-              <NavLink
-                to="/lojas"
-                className="flex items-center gap-2 px-4 py-2 rounded-lg text-[13px] font-medium text-white transition-colors whitespace-nowrap"
-                style={{ background: 'var(--accent)' }}
-              >
-                <Store size={14} />
-                Configurar Loja
-              </NavLink>
-            )}
             {lojaAtiva && (
               <div className="flex items-center gap-2 px-3 py-1.5 rounded-lg text-[12px] font-medium bg-[#e8f5e9] text-[#2e7d32]">
                 <span className="w-1.5 h-1.5 rounded-full bg-[#26a69a]" />
@@ -180,33 +171,50 @@ export default function Layout() {
             </div>
           </div>
         </header>
+        ) : null}
 
         {/* Page Content */}
-        <main className="flex-1 overflow-y-auto p-6 lg:p-8" style={{ background: 'var(--bg-primary)' }}>
-          {location.pathname === '/lojas' ? (
+        <main className="flex-1 overflow-y-auto" style={{ background: 'var(--bg-primary)' }}>
+          {!lojaAtiva && lojas.length === 0 && location.pathname !== '/lojas' ? (
+            <div className="flex flex-col flex-1 h-full" style={{ background: '#f8f9fa' }}>
+              <header className="flex justify-between items-center px-6 lg:px-8 py-5 border-b" style={{ borderColor: '#e9ecef', marginBottom: '40px' }}>
+                <div className="flex items-baseline gap-3">
+                  <h1 className="text-[22px] font-semibold" style={{ color: '#212529' }}>{currentPage}</h1>
+                  <span className="text-[13px]" style={{ color: '#6c757d' }}>{new Date().toLocaleDateString('pt-BR', { weekday: 'short', day: '2-digit', month: 'short' })}</span>
+                </div>
+                <NavLink
+                  to="/lojas"
+                  className="flex items-center gap-2 px-4 py-2 rounded-lg text-[13px] font-medium transition-colors"
+                  style={{ background: '#f1f3f5', color: '#495057', border: '1px solid #dee2e6' }}
+                >
+                  <Store size={14} />
+                  Configurar Loja
+                </NavLink>
+              </header>
+
+              <div className="flex-1 flex justify-center items-center px-6">
+                <div className="bg-white rounded-xl p-10 text-center max-w-[500px] w-full shadow-[0_4px_12px_rgba(0,0,0,0.05)] flex flex-col items-center gap-4">
+                  <div className="w-14 h-14 rounded-xl bg-[#e3f2fd] flex items-center justify-center">
+                    <Store size={24} className="text-[#1565c0]" />
+                  </div>
+                  <h2 className="text-[18px] font-semibold" style={{ color: '#212529' }}>Nenhuma loja configurada</h2>
+                  <p className="text-[13px] leading-relaxed" style={{ color: '#6c757d' }}>Adicione os dados do Supabase da sua loja para visualizar as vendas e o estoque em tempo real.</p>
+                  <NavLink
+                    to="/lojas"
+                    className="inline-flex items-center justify-center gap-2 px-6 py-3 rounded-lg text-white text-[14px] font-medium transition-colors mt-2"
+                    style={{ background: '#3bafda' }}
+                  >
+                    <Store size={16} />
+                    Configurar Primeira Loja
+                  </NavLink>
+                </div>
+              </div>
+            </div>
+          ) : location.pathname === '/lojas' ? (
             <Outlet />
           ) : (
-            <div className="relative h-full">
+            <div className="p-6 lg:p-8">
               <Outlet />
-              {!lojaAtiva && lojas.length === 0 && (
-                <div className="absolute inset-0 flex items-center justify-center bg-white/90 backdrop-blur-sm z-10">
-                  <div className="bg-white rounded-xl border border-[#e8eaed] shadow-lg p-8 text-center max-w-md w-full">
-                    <div className="w-14 h-14 rounded-xl bg-[#e3f2fd] flex items-center justify-center mx-auto mb-4">
-                      <Store size={24} className="text-[#1565c0]" />
-                    </div>
-                    <h3 className="text-[16px] font-semibold mb-1" style={{ color: 'var(--text-primary)' }}>Nenhuma loja configurada</h3>
-                    <p className="text-[13px] mb-6" style={{ color: 'var(--text-muted)' }}>Adicione os dados do Supabase da sua loja para visualizar as vendas e o estoque em tempo real.</p>
-                    <NavLink
-                      to="/lojas"
-                      className="inline-flex items-center justify-center gap-2 w-full py-2.5 rounded-lg text-white text-[13px] font-medium transition-colors"
-                      style={{ background: 'var(--accent)' }}
-                    >
-                      <Store size={16} />
-                      Configurar Primeira Loja
-                    </NavLink>
-                  </div>
-                </div>
-              )}
             </div>
           )}
         </main>
