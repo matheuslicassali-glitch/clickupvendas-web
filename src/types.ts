@@ -1,39 +1,57 @@
-export type ViewType = 
+export type ViewType =
   | 'dashboard'
   | 'vendas'
-  | 'financeiro'
   | 'caixas'
+  | 'financeiro'
   | 'relatorios'
   | 'estoque'
-  | 'clientes'
   | 'funcionarios'
-  | 'fornecedores'
-  | 'lojas';
+  | 'clientes'
+  | 'fornecedores';
 
-export interface StoreConfig {
+export type PeriodoFiltro = 'hoje' | 'semana' | 'mes';
+
+export interface Venda {
   id: string;
-  name: string;
-  cnpj?: string;
-  address?: string;
-  supabaseUrl?: string;
-  supabaseAnonKey?: string;
-  isConnected: boolean;
-  isPrimary?: boolean;
-  createdAt: string;
+  codigo: string;
+  data: string;
+  cliente_nome: string;
+  vendedor_nome: string;
+  total: number;
+  desconto: number;
+  forma_pagamento: string;
+  status: string;
+  caixa_id: string;
 }
 
-export interface Fornecedor {
+export interface VendaItem {
   id: string;
-  nome: string;
-  cnpj: string;
-  contato: string;
-  email: string;
-  telefone: string;
-  status: 'Ativo' | 'Inativo';
-  categoria: string;
-  previsaoEntrega?: string;
-  endereco?: string;
-  observacoes?: string;
+  venda_id: string;
+  produto_nome: string;
+  quantidade: number;
+  preco_unitario: number;
+  subtotal: number;
+}
+
+export interface CaixaSessao {
+  id: string;
+  data_abertura: string;
+  data_fechamento: string | null;
+  saldo_inicial: number;
+  saldo_final: number | null;
+  status: string;
+  operador: string;
+}
+
+export interface CaixaMovimentacao {
+  id: string;
+  caixa_id: string;
+  tipo: string;
+  descricao: string;
+  valor: number;
+  forma_pagamento: string | null;
+  data: string;
+  operador: string;
 }
 
 export interface Produto {
@@ -41,95 +59,47 @@ export interface Produto {
   codigo: string;
   nome: string;
   categoria: string;
-  precoVenda: number;
-  precoCusto: number;
-  estoqueAtual: number;
-  estoqueMinimo: number;
+  preco_venda: number;
+  estoque_atual: number;
+  estoque_minimo: number;
   unidade: string;
-  fornecedorId?: string;
-  fornecedorNome?: string;
-  imagemUrl?: string;
-}
-
-export interface ItemVenda {
-  produtoId: string;
-  nome: string;
-  precoUnitario: number;
-  quantidade: number;
-  subtotal: number;
-}
-
-export interface Venda {
-  id: string;
-  codigoVenda: string;
-  data: string;
-  clienteNome: string;
-  clienteCpf?: string;
-  vendedorNome: string;
-  itens: ItemVenda[];
-  total: number;
-  desconto: number;
-  formaPagamento: 'Pix' | 'Cartão de Crédito' | 'Cartão de Débito' | 'Dinheiro' | 'Fiado';
-  status: 'Concluída' | 'Cancelada' | 'Pendente';
-  lojaId: string;
-}
-
-export interface MovimentacaoCaixa {
-  id: string;
-  tipo: 'Abertura' | 'Venda' | 'Sangria' | 'Suprimento' | 'Fechamento';
-  descricao: string;
-  valor: number;
-  formaPagamento?: string;
-  data: string;
-  operador: string;
-}
-
-export interface Caixa {
-  id: string;
-  lojaId: string;
-  dataAbertura: string;
-  dataFechamento?: string;
-  saldoInicial: number;
-  saldoFinalEstimado: number;
-  saldoFinalReal?: number;
-  status: 'Aberto' | 'Fechado';
-  operador: string;
-  movimentacoes: MovimentacaoCaixa[];
-}
-
-export interface TransacaoFinanceira {
-  id: string;
-  descricao: string;
-  tipo: 'Receita' | 'Despesa';
-  categoria: string;
-  valor: number;
-  dataVencimento: string;
-  dataPagamento?: string;
-  status: 'Pago' | 'Pendente' | 'Atrasado';
-  fornecedorOuCliente?: string;
-}
-
-export interface Cliente {
-  id: string;
-  nome: string;
-  cpfCnpj: string;
-  telefone: string;
-  email: string;
-  cidade: string;
-  totalComprado: number;
-  ultimaCompra?: string;
-  status: 'Ativo' | 'Inativo';
 }
 
 export interface Funcionario {
   id: string;
   nome: string;
-  cpf: string;
-  cargo: 'Gerente' | 'Caixa' | 'Vendedor' | 'Estoquista';
+  cargo: string;
+  status: string;
+}
+
+export interface Cliente {
+  id: string;
+  nome: string;
+  cpf_cnpj: string;
   telefone: string;
   email: string;
-  salario: number;
-  comissaoPorcentagem: number;
-  totalVendasMes: number;
-  status: 'Ativo' | 'Inativo';
+  status: string;
+}
+
+export interface Fornecedor {
+  id: string;
+  nome: string;
+  cnpj: string;
+  contato: string;
+  telefone: string;
+  email: string;
+  status: string;
+  categoria: string;
+}
+
+export interface FinanceiroConta {
+  id: string;
+  descricao: string;
+  tipo: string;
+  categoria: string;
+  valor: number;
+  data_vencimento: string;
+  data_pagamento: string | null;
+  status: string;
+  pessoa: string | null;
 }
