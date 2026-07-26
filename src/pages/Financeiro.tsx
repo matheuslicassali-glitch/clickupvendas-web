@@ -9,7 +9,7 @@ export default function Financeiro() {
   const [filtro, setFiltro] = useState<string>('todos')
   const [loading, setLoading] = useState(true)
 
-  useEffect(() => { if (lojaAtiva) loadContas() }, [lojaAtiva?.id])
+  useEffect(() => { if (lojaAtiva) loadContas(); else setLoading(false) }, [lojaAtiva?.id])
 
   async function loadContas() {
     setLoading(true)

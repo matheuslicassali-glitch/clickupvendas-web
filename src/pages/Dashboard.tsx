@@ -19,7 +19,7 @@ export default function Dashboard() {
   const [produtosEstoqueBaixo, setProdutosEstoqueBaixo] = useState<Produto[]>([])
   const [loading, setLoading] = useState(true)
 
-  useEffect(() => { if (lojaAtiva) loadData() }, [lojaAtiva?.id])
+  useEffect(() => { if (lojaAtiva) loadData(); else setLoading(false) }, [lojaAtiva?.id])
 
   async function loadData() {
     setLoading(true)

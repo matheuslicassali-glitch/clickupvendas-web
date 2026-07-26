@@ -11,7 +11,7 @@ export default function Caixas() {
   const [loading, setLoading] = useState(true)
   const [loadingMovs, setLoadingMovs] = useState(false)
 
-  useEffect(() => { if (lojaAtiva) loadData() }, [lojaAtiva?.id])
+  useEffect(() => { if (lojaAtiva) loadData(); else setLoading(false) }, [lojaAtiva?.id])
 
   async function loadData() {
     setLoading(true)

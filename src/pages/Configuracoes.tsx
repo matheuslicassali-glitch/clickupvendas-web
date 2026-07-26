@@ -8,7 +8,7 @@ export default function Configuracoes() {
   const [config, setConfig] = useState<Configuracoes | null>(null)
   const [loading, setLoading] = useState(true)
 
-  useEffect(() => { if (lojaAtiva) loadConfig() }, [lojaAtiva?.id])
+  useEffect(() => { if (lojaAtiva) loadConfig(); else setLoading(false) }, [lojaAtiva?.id])
 
   async function loadConfig() {
     setLoading(true)

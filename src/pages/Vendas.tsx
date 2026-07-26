@@ -10,7 +10,7 @@ export default function Vendas() {
   const [showDetail, setShowDetail] = useState<Venda | null>(null)
   const [loading, setLoading] = useState(true)
 
-  useEffect(() => { if (lojaAtiva) loadVendas() }, [lojaAtiva?.id])
+  useEffect(() => { if (lojaAtiva) loadVendas(); else setLoading(false) }, [lojaAtiva?.id])
 
   async function loadVendas() {
     setLoading(true)

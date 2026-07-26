@@ -12,7 +12,7 @@ export default function Estoque() {
   const [filtroTipo, setFiltroTipo] = useState('')
   const [loading, setLoading] = useState(true)
 
-  useEffect(() => { if (lojaAtiva) loadData() }, [lojaAtiva?.id])
+  useEffect(() => { if (lojaAtiva) loadData(); else setLoading(false) }, [lojaAtiva?.id])
 
   async function loadData() {
     setLoading(true)

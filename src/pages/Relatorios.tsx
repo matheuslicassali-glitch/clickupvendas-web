@@ -24,7 +24,7 @@ export default function Relatorios() {
     setDataFim(hoje.toISOString().split('T')[0])
   }, [])
 
-  useEffect(() => { if (lojaAtiva) loadReport() }, [tipo, periodo, dataInicio, dataFim, lojaAtiva?.id])
+  useEffect(() => { if (lojaAtiva) loadReport(); else setLoading(false) }, [tipo, periodo, dataInicio, dataFim, lojaAtiva?.id])
 
   async function loadReport() {
     setLoading(true)

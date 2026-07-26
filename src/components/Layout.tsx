@@ -162,7 +162,7 @@ export default function Layout() {
             {!lojaAtiva && lojas.length === 0 && (
               <NavLink
                 to="/lojas"
-                className="flex items-center gap-2 px-4 py-2 rounded-lg text-[13px] font-medium text-white transition-colors"
+                className="flex items-center gap-2 px-4 py-2 rounded-lg text-[13px] font-medium text-white transition-colors whitespace-nowrap"
                 style={{ background: 'var(--accent)' }}
               >
                 <Store size={14} />
