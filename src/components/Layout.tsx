@@ -189,7 +189,7 @@ export default function Layout() {
             <div className="relative h-full">
               <Outlet />
               {!lojaAtiva && lojas.length === 0 && (
-                <div className="absolute inset-0 flex items-center justify-center bg-[var(--bg-primary)]/80 backdrop-blur-[2px] z-10">
+                <div className="absolute inset-0 flex items-center justify-center bg-white/90 backdrop-blur-sm z-10">
                   <div className="bg-white rounded-xl border border-[#e8eaed] shadow-lg p-8 text-center max-w-md w-full">
                     <div className="w-14 h-14 rounded-xl bg-[#e3f2fd] flex items-center justify-center mx-auto mb-4">
                       <Store size={24} className="text-[#1565c0]" />
