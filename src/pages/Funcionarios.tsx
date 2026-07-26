@@ -1,14 +1,18 @@
 import { useEffect, useState } from 'react'
 import { Search } from 'lucide-react'
-import { listarFuncionarios, type Funcionario } from '../api'
+import { listarFuncionarios, type Funcionario } from '../api/supabase-api'
+import { useStore } from '../contexts/StoreContext'
 
 export default function Funcionarios() {
+  const { lojaAtiva } = useStore()
   const [funcionarios, setFuncionarios] = useState<Funcionario[]>([])
   const [filtro, setFiltro] = useState('')
   const [loading, setLoading] = useState(true)
 
-  useEffect(() => { loadData() }, [])
+  useEffect(() => { if (lojaAtiva) loadData() }, [lojaAtiva?.id])
+
   async function loadData() {
+    setLoading(true)
     try { const res = await listarFuncionarios(); setFuncionarios(res.data) } catch (err) { console.error(err) } finally { setLoading(false) }
   }
 

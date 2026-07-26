@@ -1,16 +1,19 @@
 import { useEffect, useState } from 'react'
 import { Eye, X, Search, Hash } from 'lucide-react'
-import { listarVendas, type Venda } from '../api'
+import { listarVendas, type Venda } from '../api/supabase-api'
+import { useStore } from '../contexts/StoreContext'
 
 export default function Vendas() {
+  const { lojaAtiva } = useStore()
   const [vendas, setVendas] = useState<Venda[]>([])
   const [filtro, setFiltro] = useState('')
   const [showDetail, setShowDetail] = useState<Venda | null>(null)
   const [loading, setLoading] = useState(true)
 
-  useEffect(() => { loadVendas() }, [])
+  useEffect(() => { if (lojaAtiva) loadVendas() }, [lojaAtiva?.id])
 
   async function loadVendas() {
+    setLoading(true)
     try {
       const res = await listarVendas()
       setVendas(res.data)

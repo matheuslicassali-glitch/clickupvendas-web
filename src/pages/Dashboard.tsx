@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react'
 import { TrendingUp, DollarSign, ShoppingCart, Package, Users, AlertTriangle, ArrowUpRight, ArrowDownRight, Activity, Zap, Target } from 'lucide-react'
-import { listarVendas, listarProdutos, listarClientes, type Venda, type Produto } from '../api'
+import { listarVendas, listarProdutos, listarClientes, type Venda, type Produto } from '../api/supabase-api'
+import { useStore } from '../contexts/StoreContext'
 
 interface Stats {
   totalVendas: number
@@ -12,14 +13,16 @@ interface Stats {
 }
 
 export default function Dashboard() {
+  const { lojaAtiva } = useStore()
   const [stats, setStats] = useState<Stats>({ totalVendas: 0, valorTotal: 0, totalProdutos: 0, totalClientes: 0, vendasHoje: 0, valorHoje: 0 })
   const [vendasRecentes, setVendasRecentes] = useState<Venda[]>([])
   const [produtosEstoqueBaixo, setProdutosEstoqueBaixo] = useState<Produto[]>([])
   const [loading, setLoading] = useState(true)
 
-  useEffect(() => { loadData() }, [])
+  useEffect(() => { if (lojaAtiva) loadData() }, [lojaAtiva?.id])
 
   async function loadData() {
+    setLoading(true)
     try {
       const [vendasRes, produtosRes, clientesRes] = await Promise.all([listarVendas(), listarProdutos(), listarClientes()])
       const vendas = vendasRes.data

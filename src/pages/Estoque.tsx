@@ -1,8 +1,10 @@
 import { useEffect, useState } from 'react'
 import { Search, TrendingUp, TrendingDown } from 'lucide-react'
-import { listarProdutos, listarMovimentacoesEstoque, type Produto, type MovimentacaoEstoque } from '../api'
+import { listarProdutos, listarMovimentacoesEstoque, type Produto, type MovimentacaoEstoque } from '../api/supabase-api'
+import { useStore } from '../contexts/StoreContext'
 
 export default function Estoque() {
+  const { lojaAtiva } = useStore()
   const [produtos, setProdutos] = useState<Produto[]>([])
   const [movimentacoes, setMovimentacoes] = useState<MovimentacaoEstoque[]>([])
   const [tab, setTab] = useState<'produtos' | 'movimentacoes'>('produtos')
@@ -10,9 +12,10 @@ export default function Estoque() {
   const [filtroTipo, setFiltroTipo] = useState('')
   const [loading, setLoading] = useState(true)
 
-  useEffect(() => { loadData() }, [])
+  useEffect(() => { if (lojaAtiva) loadData() }, [lojaAtiva?.id])
 
   async function loadData() {
+    setLoading(true)
     try {
       const [pRes, mRes] = await Promise.all([listarProdutos(), listarMovimentacoesEstoque()])
       setProdutos(pRes.data)

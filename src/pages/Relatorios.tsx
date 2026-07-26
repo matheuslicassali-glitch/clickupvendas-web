@@ -1,11 +1,13 @@
 import { useEffect, useState } from 'react'
 import { Calendar } from 'lucide-react'
-import { listarVendas, relatorioEstoque, relatorioContador, type Venda, type RelatorioEstoque, type RelatorioContadorItem } from '../api'
+import { listarVendas, relatorioEstoque, relatorioContador, type Venda, type RelatorioEstoque, type RelatorioContadorItem } from '../api/supabase-api'
+import { useStore } from '../contexts/StoreContext'
 import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, PieChart, Pie, Cell, Legend } from 'recharts'
 
 type RelatorioTipo = 'vendas' | 'estoque' | 'contador'
 
 export default function Relatorios() {
+  const { lojaAtiva } = useStore()
   const [tipo, setTipo] = useState<RelatorioTipo>('vendas')
   const [periodo, setPeriodo] = useState('mes')
   const [dataInicio, setDataInicio] = useState('')
@@ -22,7 +24,7 @@ export default function Relatorios() {
     setDataFim(hoje.toISOString().split('T')[0])
   }, [])
 
-  useEffect(() => { loadReport() }, [tipo, periodo, dataInicio, dataFim])
+  useEffect(() => { if (lojaAtiva) loadReport() }, [tipo, periodo, dataInicio, dataFim, lojaAtiva?.id])
 
   async function loadReport() {
     setLoading(true)

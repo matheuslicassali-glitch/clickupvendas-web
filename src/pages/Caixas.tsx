@@ -1,17 +1,20 @@
 import { useEffect, useState } from 'react'
 import { Wallet, ChevronDown, ChevronUp, Minus, Plus } from 'lucide-react'
-import { listarHistoricoCaixa, listarMovimentacoesCaixa, type CaixaSessao, type CaixaMovimentacao } from '../api'
+import { listarHistoricoCaixa, listarMovimentacoesCaixa, type CaixaSessao, type CaixaMovimentacao } from '../api/supabase-api'
+import { useStore } from '../contexts/StoreContext'
 
 export default function Caixas() {
+  const { lojaAtiva } = useStore()
   const [sessoes, setSessoes] = useState<CaixaSessao[]>([])
   const [expandedId, setExpandedId] = useState<number | null>(null)
   const [movimentacoes, setMovimentacoes] = useState<CaixaMovimentacao[]>([])
   const [loading, setLoading] = useState(true)
   const [loadingMovs, setLoadingMovs] = useState(false)
 
-  useEffect(() => { loadData() }, [])
+  useEffect(() => { if (lojaAtiva) loadData() }, [lojaAtiva?.id])
 
   async function loadData() {
+    setLoading(true)
     try { const res = await listarHistoricoCaixa(); setSessoes(res.data) } catch (err) { console.error(err) } finally { setLoading(false) }
   }
 

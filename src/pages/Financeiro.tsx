@@ -1,15 +1,18 @@
 import { useEffect, useState } from 'react'
 import { TrendingUp, TrendingDown, Clock, Filter } from 'lucide-react'
-import { listarContas, type ContaFinanceira } from '../api'
+import { listarContas, type ContaFinanceira } from '../api/supabase-api'
+import { useStore } from '../contexts/StoreContext'
 
 export default function Financeiro() {
+  const { lojaAtiva } = useStore()
   const [contas, setContas] = useState<ContaFinanceira[]>([])
   const [filtro, setFiltro] = useState<string>('todos')
   const [loading, setLoading] = useState(true)
 
-  useEffect(() => { loadContas() }, [])
+  useEffect(() => { if (lojaAtiva) loadContas() }, [lojaAtiva?.id])
 
   async function loadContas() {
+    setLoading(true)
     try {
       const res = await listarContas()
       setContas(res.data)

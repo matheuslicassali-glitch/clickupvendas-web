@@ -1,14 +1,18 @@
 import { useEffect, useState } from 'react'
 import { Search } from 'lucide-react'
-import { listarClientes, type Cliente } from '../api'
+import { listarClientes, type Cliente } from '../api/supabase-api'
+import { useStore } from '../contexts/StoreContext'
 
 export default function Clientes() {
+  const { lojaAtiva } = useStore()
   const [clientes, setClientes] = useState<Cliente[]>([])
   const [filtro, setFiltro] = useState('')
   const [loading, setLoading] = useState(true)
 
-  useEffect(() => { loadData() }, [])
+  useEffect(() => { if (lojaAtiva) loadData() }, [lojaAtiva?.id])
+
   async function loadData() {
+    setLoading(true)
     try { const res = await listarClientes(); setClientes(res.data) } catch (err) { console.error(err) } finally { setLoading(false) }
   }
 

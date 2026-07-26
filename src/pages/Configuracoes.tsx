@@ -1,13 +1,17 @@
 import { useEffect, useState } from 'react'
 import { Building2, MapPin, Phone, Mail } from 'lucide-react'
-import { obterConfiguracoes, type Configuracoes } from '../api'
+import { obterConfiguracoes, type Configuracoes } from '../api/supabase-api'
+import { useStore } from '../contexts/StoreContext'
 
 export default function Configuracoes() {
+  const { lojaAtiva } = useStore()
   const [config, setConfig] = useState<Configuracoes | null>(null)
   const [loading, setLoading] = useState(true)
 
-  useEffect(() => { loadConfig() }, [])
+  useEffect(() => { if (lojaAtiva) loadConfig() }, [lojaAtiva?.id])
+
   async function loadConfig() {
+    setLoading(true)
     try { const res = await obterConfiguracoes(); setConfig(res.data) } catch (err) { console.error(err) } finally { setLoading(false) }
   }
 
