@@ -192,16 +192,16 @@ export default function Layout() {
                 </NavLink>
               </header>
 
-              <div className="flex-1 flex justify-center items-center px-6">
-                <div className="bg-white rounded-xl p-10 text-center max-w-[500px] w-full shadow-[0_4px_12px_rgba(0,0,0,0.05)] flex flex-col items-center gap-4">
-                  <div className="w-14 h-14 rounded-xl bg-[#e3f2fd] flex items-center justify-center">
-                    <Store size={24} className="text-[#1565c0]" />
+              <div className="flex-1 flex justify-center items-start pt-24 px-6">
+                <div className="bg-white rounded-2xl p-12 text-center max-w-[520px] w-full shadow-[0_2px_16px_rgba(0,0,0,0.06)] flex flex-col items-center gap-4">
+                  <div className="w-[72px] h-[72px] rounded-full bg-[#e3f2fd] flex items-center justify-center">
+                    <Store size={32} className="text-[#1565c0]" />
                   </div>
                   <h2 className="text-[18px] font-semibold" style={{ color: '#212529' }}>Nenhuma loja configurada</h2>
-                  <p className="text-[13px] leading-relaxed" style={{ color: '#6c757d' }}>Adicione os dados do Supabase da sua loja para visualizar as vendas e o estoque em tempo real.</p>
+                  <p className="text-[13px] leading-[1.6]" style={{ color: '#6c757d' }}>Adicione os dados do Supabase da sua loja para visualizar as vendas e o estoque em tempo real.</p>
                   <NavLink
                     to="/lojas"
-                    className="inline-flex items-center justify-center gap-2 px-6 py-3 rounded-lg text-white text-[14px] font-medium transition-colors mt-2"
+                    className="inline-flex items-center justify-center gap-2 w-full py-3 rounded-lg text-white text-[14px] font-medium transition-colors mt-2"
                     style={{ background: '#3bafda' }}
                   >
                     <Store size={16} />
