@@ -185,33 +185,29 @@ export default function Layout() {
         <main className="flex-1 overflow-y-auto p-6 lg:p-8" style={{ background: 'var(--bg-primary)' }}>
           {location.pathname === '/lojas' ? (
             <Outlet />
-          ) : !lojaAtiva && lojas.length === 0 ? (
-            <div className="flex items-center justify-center h-full">
-              <div className="bg-white rounded-xl border border-[#e8eaed] shadow-sm p-8 text-center max-w-md w-full">
-                <div className="w-14 h-14 rounded-xl bg-[#e3f2fd] flex items-center justify-center mx-auto mb-4">
-                  <Store size={24} className="text-[#1565c0]" />
-                </div>
-                <h3 className="text-[16px] font-semibold mb-1" style={{ color: 'var(--text-primary)' }}>Nenhuma loja configurada</h3>
-                <p className="text-[13px] mb-6" style={{ color: 'var(--text-muted)' }}>Adicione os dados do Supabase da sua loja para visualizar as vendas e o estoque em tempo real.</p>
-                <NavLink
-                  to="/lojas"
-                  className="inline-flex items-center justify-center gap-2 w-full py-2.5 rounded-lg text-white text-[13px] font-medium transition-colors"
-                  style={{ background: 'var(--accent)' }}
-                >
-                  <Store size={16} />
-                  Configurar Primeira Loja
-                </NavLink>
-              </div>
-            </div>
-          ) : !lojaAtiva ? (
-            <div className="flex items-center justify-center h-full">
-              <div className="text-center">
-                <p className="text-[14px] font-medium mb-1" style={{ color: 'var(--text-primary)' }}>Nenhuma loja selecionada</p>
-                <p className="text-[13px]" style={{ color: 'var(--text-muted)' }}>Selecione uma loja no menu lateral.</p>
-              </div>
-            </div>
           ) : (
-            <Outlet />
+            <div className="relative h-full">
+              <Outlet />
+              {!lojaAtiva && lojas.length === 0 && (
+                <div className="absolute inset-0 flex items-center justify-center bg-[var(--bg-primary)]/80 backdrop-blur-[2px] z-10">
+                  <div className="bg-white rounded-xl border border-[#e8eaed] shadow-lg p-8 text-center max-w-md w-full">
+                    <div className="w-14 h-14 rounded-xl bg-[#e3f2fd] flex items-center justify-center mx-auto mb-4">
+                      <Store size={24} className="text-[#1565c0]" />
+                    </div>
+                    <h3 className="text-[16px] font-semibold mb-1" style={{ color: 'var(--text-primary)' }}>Nenhuma loja configurada</h3>
+                    <p className="text-[13px] mb-6" style={{ color: 'var(--text-muted)' }}>Adicione os dados do Supabase da sua loja para visualizar as vendas e o estoque em tempo real.</p>
+                    <NavLink
+                      to="/lojas"
+                      className="inline-flex items-center justify-center gap-2 w-full py-2.5 rounded-lg text-white text-[13px] font-medium transition-colors"
+                      style={{ background: 'var(--accent)' }}
+                    >
+                      <Store size={16} />
+                      Configurar Primeira Loja
+                    </NavLink>
+                  </div>
+                </div>
+              )}
+            </div>
           )}
         </main>
       </div>
