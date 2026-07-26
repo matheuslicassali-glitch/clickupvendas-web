@@ -3,6 +3,26 @@ import { Store, Plus, Trash2, Check, Edit3, X } from 'lucide-react'
 import { useStore } from '../contexts/StoreContext'
 import type { Loja } from '../lib/supabase'
 
+const cardStyle: React.CSSProperties = {
+  background: 'linear-gradient(135deg, #111827, #0f172a)',
+  border: '1px solid rgba(255,255,255,0.1)',
+  borderRadius: '18px',
+  padding: '24px',
+}
+
+const inputStyle: React.CSSProperties = {
+  width: '100%',
+  background: '#0c1425',
+  border: '1px solid rgba(255,255,255,0.12)',
+  borderRadius: '12px',
+  padding: '12px 16px',
+  color: '#f1f5f9',
+  fontSize: '13px',
+  fontWeight: 500,
+  outline: 'none',
+  transition: 'border-color 0.2s',
+}
+
 export default function Lojas() {
   const { lojas, lojaAtiva, selecionar, adicionar, remover, atualizar } = useStore()
   const [showForm, setShowForm] = useState(false)
@@ -64,7 +84,7 @@ export default function Lojas() {
   }
 
   return (
-    <div className="space-y-8 animate-fade-in">
+    <div className="space-y-6 animate-fade-in">
       <div className="flex items-end justify-between">
         <div>
           <h1 className="page-title">Lojas</h1>
@@ -81,13 +101,13 @@ export default function Lojas() {
       </div>
 
       {lojas.length === 0 && !showForm && (
-        <div className="gradient-card">
+        <div style={cardStyle}>
           <div className="empty-state py-16">
-            <div className="w-20 h-20 rounded-3xl flex items-center justify-center mb-4" style={{ background: 'rgba(102, 126, 234, 0.1)' }}>
+            <div className="w-20 h-20 rounded-3xl flex items-center justify-center mb-4" style={{ background: 'rgba(102, 126, 234, 0.15)' }}>
               <Store size={36} style={{ color: '#667eea' }} />
             </div>
-            <p className="text-[16px] font-bold mb-2" style={{ color: 'var(--text-primary)' }}>Nenhuma loja cadastrada</p>
-            <p className="text-[13px] mb-6" style={{ color: 'var(--text-muted)' }}>Adicione sua primeira loja para comecar a visualizar dados</p>
+            <p className="text-[16px] font-bold mb-2" style={{ color: '#f1f5f9' }}>Nenhuma loja cadastrada</p>
+            <p className="text-[13px] mb-6" style={{ color: '#64748b' }}>Adicione sua primeira loja para comecar a visualizar dados</p>
             <button
               onClick={() => setShowForm(true)}
               className="flex items-center gap-2 px-6 py-3 rounded-xl text-[13px] font-semibold"
@@ -101,45 +121,48 @@ export default function Lojas() {
       )}
 
       {showForm && (
-        <div className="gradient-card p-6" style={{ animation: 'fadeIn 0.3s ease-out' }}>
+        <div style={{ ...cardStyle, animation: 'fadeIn 0.3s ease-out' }}>
           <div className="flex items-center justify-between mb-6">
-            <h3 className="text-[16px] font-bold" style={{ color: 'var(--text-primary)' }}>
+            <h3 className="text-[16px] font-bold" style={{ color: '#f1f5f9' }}>
               {editId ? 'Editar Loja' : 'Nova Loja'}
             </h3>
-            <button onClick={resetForm} className="p-2 rounded-lg hover:bg-white/5" style={{ color: 'var(--text-muted)' }}>
+            <button onClick={resetForm} className="p-2 rounded-lg" style={{ color: '#64748b', background: 'rgba(255,255,255,0.05)' }}>
               <X size={18} />
             </button>
           </div>
 
           <div className="space-y-4">
             <div>
-              <label className="block text-[12px] font-medium mb-1.5" style={{ color: 'var(--text-muted)' }}>Nome da Loja</label>
+              <label className="block text-[12px] font-semibold mb-2" style={{ color: '#94a3b8' }}>Nome da Loja</label>
               <input
                 value={nome}
                 onChange={(e) => setNome(e.target.value)}
                 placeholder="Ex: Matriz, Filial 1..."
-                className="search-input"
-                style={{ paddingLeft: '16px' }}
+                style={inputStyle}
+                onFocus={(e) => e.currentTarget.style.borderColor = 'rgba(102, 126, 234, 0.5)'}
+                onBlur={(e) => e.currentTarget.style.borderColor = 'rgba(255,255,255,0.12)'}
               />
             </div>
             <div>
-              <label className="block text-[12px] font-medium mb-1.5" style={{ color: 'var(--text-muted)' }}>Supabase URL</label>
+              <label className="block text-[12px] font-semibold mb-2" style={{ color: '#94a3b8' }}>Supabase URL</label>
               <input
                 value={url}
                 onChange={(e) => setUrl(e.target.value)}
                 placeholder="https://xxxxx.supabase.co"
-                className="search-input"
-                style={{ paddingLeft: '16px' }}
+                style={inputStyle}
+                onFocus={(e) => e.currentTarget.style.borderColor = 'rgba(102, 126, 234, 0.5)'}
+                onBlur={(e) => e.currentTarget.style.borderColor = 'rgba(255,255,255,0.12)'}
               />
             </div>
             <div>
-              <label className="block text-[12px] font-medium mb-1.5" style={{ color: 'var(--text-muted)' }}>Supabase Anon Key</label>
+              <label className="block text-[12px] font-semibold mb-2" style={{ color: '#94a3b8' }}>Supabase Anon Key</label>
               <input
                 value={key}
                 onChange={(e) => setKey(e.target.value)}
                 placeholder="eyJhbGciOiJIUzI1NiIs..."
-                className="search-input"
-                style={{ paddingLeft: '16px' }}
+                style={inputStyle}
+                onFocus={(e) => e.currentTarget.style.borderColor = 'rgba(102, 126, 234, 0.5)'}
+                onBlur={(e) => e.currentTarget.style.borderColor = 'rgba(255,255,255,0.12)'}
               />
             </div>
 
@@ -149,9 +172,9 @@ export default function Lojas() {
                 disabled={testStatus === 'testing'}
                 className="flex items-center gap-2 px-4 py-2.5 rounded-xl text-[13px] font-medium transition-all"
                 style={{
-                  background: testStatus === 'ok' ? 'rgba(56, 239, 125, 0.1)' : testStatus === 'error' ? 'rgba(239, 68, 68, 0.1)' : 'var(--bg-surface)',
-                  color: testStatus === 'ok' ? '#38ef7d' : testStatus === 'error' ? '#f87171' : 'var(--text-muted)',
-                  border: `1px solid ${testStatus === 'ok' ? 'rgba(56, 239, 125, 0.3)' : testStatus === 'error' ? 'rgba(239, 68, 68, 0.3)' : 'var(--border-color)'}`,
+                  background: testStatus === 'ok' ? 'rgba(56, 239, 125, 0.1)' : testStatus === 'error' ? 'rgba(239, 68, 68, 0.1)' : 'rgba(255,255,255,0.05)',
+                  color: testStatus === 'ok' ? '#38ef7d' : testStatus === 'error' ? '#f87171' : '#94a3b8',
+                  border: `1px solid ${testStatus === 'ok' ? 'rgba(56, 239, 125, 0.3)' : testStatus === 'error' ? 'rgba(239, 68, 68, 0.3)' : 'rgba(255,255,255,0.1)'}`,
                 }}
               >
                 {testStatus === 'testing' ? 'Testando...' : testStatus === 'ok' ? 'Conectado!' : 'Testar Conexao'}
@@ -163,8 +186,12 @@ export default function Lojas() {
               )}
             </div>
 
-            <div className="flex justify-end gap-3 pt-3" style={{ borderTop: '1px solid var(--border-color)' }}>
-              <button onClick={resetForm} className="px-5 py-2.5 rounded-xl text-[13px] font-medium" style={{ color: 'var(--text-muted)', background: 'var(--bg-surface)' }}>
+            <div className="flex justify-end gap-3 pt-4" style={{ borderTop: '1px solid rgba(255,255,255,0.08)' }}>
+              <button
+                onClick={resetForm}
+                className="px-5 py-2.5 rounded-xl text-[13px] font-medium"
+                style={{ color: '#94a3b8', background: 'rgba(255,255,255,0.05)', border: '1px solid rgba(255,255,255,0.1)' }}
+              >
                 Cancelar
               </button>
               <button
@@ -172,9 +199,10 @@ export default function Lojas() {
                 disabled={!nome || !url || !key}
                 className="px-5 py-2.5 rounded-xl text-[13px] font-semibold transition-all"
                 style={{
-                  background: nome && url && key ? 'linear-gradient(135deg, #667eea, #764ba2)' : 'var(--bg-surface)',
-                  color: nome && url && key ? 'white' : 'var(--text-muted)',
+                  background: nome && url && key ? 'linear-gradient(135deg, #667eea, #764ba2)' : 'rgba(255,255,255,0.05)',
+                  color: nome && url && key ? 'white' : '#64748b',
                   opacity: nome && url && key ? 1 : 0.5,
+                  border: '1px solid rgba(255,255,255,0.1)',
                 }}
               >
                 {editId ? 'Salvar Alteracoes' : 'Adicionar Loja'}
@@ -191,12 +219,12 @@ export default function Lojas() {
             return (
               <div
                 key={loja.id}
-                className="gradient-card p-5 transition-all duration-300"
                 style={{
+                  ...cardStyle,
+                  borderColor: isActive ? 'rgba(102, 126, 234, 0.5)' : 'rgba(255,255,255,0.1)',
+                  boxShadow: isActive ? '0 0 30px rgba(102, 126, 234, 0.15)' : 'none',
                   animation: `fadeIn 0.3s ease-out ${i * 50}ms forwards`,
                   opacity: 0,
-                  borderColor: isActive ? 'rgba(102, 126, 234, 0.4)' : undefined,
-                  boxShadow: isActive ? '0 0 30px rgba(102, 126, 234, 0.1)' : undefined,
                 }}
               >
                 <div className="flex items-center justify-between">
@@ -204,21 +232,21 @@ export default function Lojas() {
                     <div
                       className="w-12 h-12 rounded-2xl flex items-center justify-center"
                       style={{
-                        background: isActive ? 'linear-gradient(135deg, #667eea, #764ba2)' : 'rgba(255,255,255,0.03)',
+                        background: isActive ? 'linear-gradient(135deg, #667eea, #764ba2)' : 'rgba(255,255,255,0.05)',
                       }}
                     >
-                      <Store size={20} style={{ color: isActive ? 'white' : 'var(--text-muted)' }} />
+                      <Store size={20} style={{ color: isActive ? 'white' : '#64748b' }} />
                     </div>
                     <div>
                       <div className="flex items-center gap-2">
-                        <p className="text-[15px] font-semibold" style={{ color: 'var(--text-primary)' }}>{loja.nome}</p>
+                        <p className="text-[15px] font-semibold" style={{ color: '#f1f5f9' }}>{loja.nome}</p>
                         {isActive && (
                           <span className="flex items-center gap-1 px-2 py-0.5 rounded-full text-[10px] font-bold" style={{ background: 'rgba(56, 239, 125, 0.1)', color: '#38ef7d', border: '1px solid rgba(56, 239, 125, 0.2)' }}>
                             <Check size={10} /> ATIVA
                           </span>
                         )}
                       </div>
-                      <p className="text-[12px] font-medium" style={{ color: 'var(--text-muted)', fontFamily: 'monospace' }}>
+                      <p className="text-[12px] font-medium" style={{ color: '#64748b', fontFamily: 'monospace' }}>
                         {loja.supabaseUrl.replace('https://', '')}
                       </p>
                     </div>
@@ -229,22 +257,22 @@ export default function Lojas() {
                       <button
                         onClick={() => selecionar(loja.id)}
                         className="px-4 py-2 rounded-xl text-[12px] font-semibold transition-all"
-                        style={{ background: 'rgba(102, 126, 234, 0.1)', color: '#667eea', border: '1px solid rgba(102, 126, 234, 0.2)' }}
+                        style={{ background: 'rgba(102, 126, 234, 0.15)', color: '#667eea', border: '1px solid rgba(102, 126, 234, 0.3)' }}
                       >
                         Selecionar
                       </button>
                     )}
                     <button
                       onClick={() => startEdit(loja)}
-                      className="p-2 rounded-lg hover:bg-white/5 transition-colors"
-                      style={{ color: 'var(--text-muted)' }}
+                      className="p-2 rounded-lg transition-colors"
+                      style={{ color: '#94a3b8', background: 'rgba(255,255,255,0.05)' }}
                     >
                       <Edit3 size={16} />
                     </button>
                     <button
                       onClick={() => { if (confirm('Remover esta loja?')) remover(loja.id) }}
-                      className="p-2 rounded-lg hover:bg-white/5 transition-colors"
-                      style={{ color: '#f87171' }}
+                      className="p-2 rounded-lg transition-colors"
+                      style={{ color: '#f87171', background: 'rgba(239, 68, 68, 0.1)' }}
                     >
                       <Trash2 size={16} />
                     </button>
@@ -257,13 +285,13 @@ export default function Lojas() {
       )}
 
       {lojas.length > 0 && (
-        <div className="gradient-card p-5">
+        <div style={cardStyle}>
           <h3 className="section-title">Como funciona</h3>
-          <div className="space-y-3 text-[13px]" style={{ color: 'var(--text-secondary)' }}>
+          <div className="space-y-3 text-[13px]" style={{ color: '#94a3b8' }}>
             <p>Cada loja precisa ter seu proprio projeto Supabase. O desktop ClickUpVendas sincroniza os dados automaticamente para o Supabase da loja.</p>
-            <div className="p-4 rounded-xl" style={{ background: 'var(--bg-surface)', border: '1px solid var(--border-color)' }}>
-              <p className="font-semibold mb-2" style={{ color: 'var(--text-primary)' }}>Para adicionar uma nova loja:</p>
-              <ol className="space-y-1 ml-4 list-decimal" style={{ color: 'var(--text-muted)' }}>
+            <div className="p-4 rounded-xl" style={{ background: 'rgba(255,255,255,0.03)', border: '1px solid rgba(255,255,255,0.08)' }}>
+              <p className="font-semibold mb-2" style={{ color: '#f1f5f9' }}>Para adicionar uma nova loja:</p>
+              <ol className="space-y-1 ml-4 list-decimal" style={{ color: '#64748b' }}>
                 <li>Crie um projeto no Supabase (supabase.com)</li>
                 <li>Execute o SQL de criacao das tabelas no novo projeto</li>
                 <li>Cole a URL e a Anon Key do projeto aqui</li>
