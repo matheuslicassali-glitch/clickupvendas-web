@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react'
-import { DollarSign } from 'lucide-react'
+import { CreditCard, AlertTriangle } from 'lucide-react'
 import { listarPagamentosFiado, listarClientes, type Cliente } from '../api'
 
 interface PagamentoFiado {
@@ -17,7 +17,6 @@ export default function Fiado() {
   const [loading, setLoading] = useState(true)
 
   useEffect(() => { loadData() }, [])
-
   async function loadData() {
     try {
       const [pRes, cRes] = await Promise.all([listarPagamentosFiado(), listarClientes()])
@@ -29,94 +28,88 @@ export default function Fiado() {
   const clientesComDebito = clientes.filter((c) => (c.SaldoDevedor || 0) > 0)
   const totalDevido = clientesComDebito.reduce((a, c) => a + (c.SaldoDevedor || 0), 0)
 
-  const pagamentosFiltrados = filtroCliente
-    ? pagamentos.filter((p) => p.ClienteID === filtroCliente)
-    : pagamentos
+  const pagamentosFiltrados = filtroCliente ? pagamentos.filter((p) => p.ClienteID === filtroCliente) : pagamentos
 
-  function getClienteNome(id: number) {
-    return clientes.find((c) => c.ID === id)?.Nome || `Cliente #${id}`
-  }
+  function getClienteNome(id: number) { return clientes.find((c) => c.ID === id)?.Nome || `Cliente #${id}` }
 
-  if (loading) return <div className="flex items-center justify-center h-64"><div className="animate-spin rounded-full h-8 w-8 border-b-2" style={{ borderColor: 'var(--primary)' }} /></div>
+  if (loading) return <div className="flex items-center justify-center h-[60vh]"><div className="loading-spinner" /></div>
 
   return (
-    <div className="space-y-6">
-      {/* Resumo */}
+    <div className="space-y-8 animate-fade-in">
+      <div>
+        <h1 className="page-title">Fiado</h1>
+        <p className="page-subtitle">Controle de debitos e pagamentos</p>
+      </div>
+
       <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-        <div className="rounded-xl p-4" style={{ background: 'var(--card)', border: '1px solid var(--border)' }}>
-          <p className="text-sm" style={{ color: 'var(--muted-foreground)' }}>Total em Debito</p>
-          <p className="text-2xl font-bold" style={{ color: '#ef4444' }}>R$ {totalDevido.toFixed(2)}</p>
+        <div className="stat-card stat-card-red">
+          <div className="flex items-start justify-between mb-3">
+            <div className="icon-box" style={{ background: 'var(--gradient-red)' }}><AlertTriangle size={20} className="text-white" /></div>
+          </div>
+          <p className="text-[12px] font-medium mb-1" style={{ color: 'var(--text-muted)' }}>Total em Debito</p>
+          <p className="text-[24px] font-bold" style={{ color: 'var(--accent-red)' }}>R$ {totalDevido.toFixed(2)}</p>
         </div>
-        <div className="rounded-xl p-4" style={{ background: 'var(--card)', border: '1px solid var(--border)' }}>
-          <p className="text-sm" style={{ color: 'var(--muted-foreground)' }}>Clientes com Debito</p>
-          <p className="text-2xl font-bold" style={{ color: 'var(--foreground)' }}>{clientesComDebito.length}</p>
+        <div className="stat-card stat-card-amber">
+          <div className="flex items-start justify-between mb-3">
+            <div className="icon-box" style={{ background: 'var(--gradient-amber)' }}><CreditCard size={20} className="text-white" /></div>
+          </div>
+          <p className="text-[12px] font-medium mb-1" style={{ color: 'var(--text-muted)' }}>Clientes com Debito</p>
+          <p className="text-[24px] font-bold" style={{ color: 'var(--text-primary)' }}>{clientesComDebito.length}</p>
         </div>
       </div>
 
-      {/* Clientes com debito */}
       {clientesComDebito.length > 0 && (
-        <div className="rounded-xl shadow-sm" style={{ background: 'var(--card)', border: '1px solid var(--border)' }}>
-          <div className="p-4" style={{ borderBottom: '1px solid var(--border)' }}>
-            <h3 className="font-semibold" style={{ color: 'var(--foreground)' }}>Clientes com Debito</h3>
+        <div className="gradient-card">
+          <div className="p-5" style={{ borderBottom: '1px solid var(--border-color)' }}>
+            <h3 className="section-title">Clientes com Debito</h3>
           </div>
-          <div className="p-4 space-y-3">
-            {clientesComDebito.map((c) => (
-              <div key={c.ID} className="flex items-center justify-between p-3 rounded-lg" style={{ background: 'var(--muted)' }}>
-                <div>
-                  <p className="text-sm font-medium" style={{ color: 'var(--foreground)' }}>{c.Nome}</p>
-                  <p className="text-xs" style={{ color: 'var(--muted-foreground)' }}>{c.Telefone || 'Sem telefone'}</p>
+          <div className="p-4 space-y-2">
+            {clientesComDebito.map((c, i) => (
+              <div key={c.ID} className="flex items-center justify-between p-4 rounded-xl transition-all hover:bg-white/[0.02]" style={{ background: 'var(--bg-surface)', animation: `fadeIn 0.3s ease-out ${i * 50}ms forwards`, opacity: 0 }}>
+                <div className="flex items-center gap-3">
+                  <div className="w-10 h-10 rounded-xl flex items-center justify-center text-[13px] font-bold" style={{ background: 'rgba(239, 68, 68, 0.12)', color: 'var(--accent-red-light)' }}>
+                    {c.Nome?.charAt(0)?.toUpperCase() || '?'}
+                  </div>
+                  <div>
+                    <p className="text-[14px] font-medium" style={{ color: 'var(--text-primary)' }}>{c.Nome}</p>
+                    <p className="text-[12px]" style={{ color: 'var(--text-muted)' }}>{c.Telefone || 'Sem telefone'}</p>
+                  </div>
                 </div>
-                <span className="text-sm font-bold" style={{ color: '#ef4444' }}>R$ {(c.SaldoDevedor || 0).toFixed(2)}</span>
+                <span className="badge badge-danger">R$ {(c.SaldoDevedor || 0).toFixed(2)}</span>
               </div>
             ))}
           </div>
         </div>
       )}
 
-      {/* Historico de pagamentos */}
-      <div className="flex items-center gap-2">
-        <DollarSign size={18} style={{ color: 'var(--primary)' }} />
-        <h3 className="font-semibold" style={{ color: 'var(--foreground)' }}>Historico de Pagamentos</h3>
-      </div>
-
-      <div className="flex items-center gap-2">
+      <div>
+        <h3 className="section-title">Historico de Pagamentos</h3>
         <select
           value={filtroCliente}
           onChange={(e) => setFiltroCliente(e.target.value ? Number(e.target.value) : '')}
-          className="px-3 py-2 rounded-lg text-sm"
-          style={{ background: 'var(--card)', border: '1px solid var(--border)', color: 'var(--foreground)' }}
+          className="px-4 py-2.5 rounded-xl text-[13px] font-medium"
+          style={{ background: 'var(--bg-card)', border: '1px solid var(--border-color)', color: 'var(--text-primary)' }}
         >
           <option value="">Todos os clientes</option>
-          {clientes.map((c) => (
-            <option key={c.ID} value={c.ID}>{c.Nome}</option>
-          ))}
+          {clientes.map((c) => <option key={c.ID} value={c.ID}>{c.Nome}</option>)}
         </select>
       </div>
 
-      <div className="rounded-xl shadow-sm overflow-hidden" style={{ background: 'var(--card)', border: '1px solid var(--border)' }}>
+      <div className="gradient-card overflow-hidden">
         <div className="overflow-x-auto">
-          <table className="w-full text-sm">
-            <thead>
-              <tr style={{ background: 'var(--muted)' }}>
-                <th className="text-left p-3 font-medium" style={{ color: 'var(--muted-foreground)' }}>Data</th>
-                <th className="text-left p-3 font-medium" style={{ color: 'var(--muted-foreground)' }}>Cliente</th>
-                <th className="text-left p-3 font-medium" style={{ color: 'var(--muted-foreground)' }}>Valor</th>
-                <th className="text-left p-3 font-medium" style={{ color: 'var(--muted-foreground)' }}>Observacoes</th>
-              </tr>
-            </thead>
+          <table className="w-full table-modern">
+            <thead><tr><th>Data</th><th>Cliente</th><th>Valor</th><th>Observacoes</th></tr></thead>
             <tbody>
               {pagamentosFiltrados.length === 0 ? (
-                <tr><td colSpan={4} className="p-4 text-center" style={{ color: 'var(--muted-foreground)' }}>Nenhum pagamento registrado</td></tr>
-              ) : (
-                pagamentosFiltrados.map((p: PagamentoFiado) => (
-                  <tr key={p.ID} style={{ borderTop: '1px solid var(--border)' }}>
-                    <td className="p-3" style={{ color: 'var(--muted-foreground)' }}>{new Date(p.Data).toLocaleString('pt-BR')}</td>
-                    <td className="p-3 font-medium" style={{ color: 'var(--foreground)' }}>{getClienteNome(p.ClienteID)}</td>
-                    <td className="p-3 font-bold" style={{ color: '#22c55e' }}>R$ {(p.Valor || 0).toFixed(2)}</td>
-                    <td className="p-3" style={{ color: 'var(--muted-foreground)' }}>{p.Observacoes || '-'}</td>
-                  </tr>
-                ))
-              )}
+                <tr><td colSpan={4} style={{ textAlign: 'center', color: 'var(--text-muted)', padding: '40px' }}>Nenhum pagamento registrado</td></tr>
+              ) : pagamentosFiltrados.map((p: PagamentoFiado, i) => (
+                <tr key={p.ID} style={{ animation: `fadeIn 0.3s ease-out ${i * 30}ms forwards`, opacity: 0 }}>
+                  <td style={{ color: 'var(--text-muted)', fontSize: '13px' }}>{new Date(p.Data).toLocaleString('pt-BR')}</td>
+                  <td style={{ color: 'var(--text-primary)', fontWeight: 500 }}>{getClienteNome(p.ClienteID)}</td>
+                  <td><span className="font-bold" style={{ color: 'var(--accent-green)' }}>R$ {(p.Valor || 0).toFixed(2)}</span></td>
+                  <td style={{ color: 'var(--text-muted)' }}>{p.Observacoes || '-'}</td>
+                </tr>
+              ))}
             </tbody>
           </table>
         </div>

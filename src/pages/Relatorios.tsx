@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react'
-import { BarChart3, Calendar } from 'lucide-react'
+import { Calendar } from 'lucide-react'
 import { listarVendas, relatorioEstoque, relatorioContador, type Venda, type RelatorioEstoque, type RelatorioContadorItem } from '../api'
 import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, PieChart, Pie, Cell, Legend } from 'recharts'
 
@@ -27,26 +27,12 @@ export default function Relatorios() {
   async function loadReport() {
     setLoading(true)
     try {
-      if (tipo === 'vendas') {
-        const res = await listarVendas()
-        setVendas(res.data)
-      } else if (tipo === 'estoque') {
-        const res = await relatorioEstoque(periodo)
-        setEstoque(res.data)
-      } else if (tipo === 'contador') {
-        if (dataInicio && dataFim) {
-          const res = await relatorioContador({ data_inicio: dataInicio, data_fim: dataFim })
-          setContador(res.data)
-        }
-      }
-    } catch (err) {
-      console.error('Erro ao carregar relatorio:', err)
-    } finally {
-      setLoading(false)
-    }
+      if (tipo === 'vendas') { const res = await listarVendas(); setVendas(res.data) }
+      else if (tipo === 'estoque') { const res = await relatorioEstoque(periodo); setEstoque(res.data) }
+      else if (tipo === 'contador' && dataInicio && dataFim) { const res = await relatorioContador({ data_inicio: dataInicio, data_fim: dataFim }); setContador(res.data) }
+    } catch (err) { console.error('Erro ao carregar relatorio:', err) } finally { setLoading(false) }
   }
 
-  // Vendas por dia (grafico)
   function getVendasPorDia() {
     const map: Record<string, { vendas: number; valor: number }> = {}
     vendas.forEach((v) => {
@@ -55,275 +41,169 @@ export default function Relatorios() {
       map[dia].vendas++
       map[dia].valor += v.ValorTotal || 0
     })
-    return Object.entries(map).map(([dia, data]) => ({
-      name: dia,
-      vendas: data.vendas,
-      valor: data.valor,
-    }))
+    return Object.entries(map).map(([dia, data]) => ({ name: dia, vendas: data.vendas, valor: data.valor }))
   }
 
-  // Vendas por forma de pagamento (pie)
   function getVendasPorPagamento() {
     const map: Record<string, number> = {}
-    vendas.forEach((v) => {
-      const fp = v.FormaPagamento || 'Outro'
-      map[fp] = (map[fp] || 0) + (v.ValorTotal || 0)
-    })
-    const colors = ['#6366f1', '#22c55e', '#f59e0b', '#ef4444', '#06b6d4', '#8b5cf6']
-    return Object.entries(map).map(([name, value], i) => ({
-      name,
-      value,
-      color: colors[i % colors.length],
-    }))
+    vendas.forEach((v) => { const fp = v.FormaPagamento || 'Outro'; map[fp] = (map[fp] || 0) + (v.ValorTotal || 0) })
+    const colors = ['#3b82f6', '#10b981', '#f59e0b', '#ef4444', '#8b5cf6', '#06b6d4']
+    return Object.entries(map).map(([name, value], i) => ({ name, value, color: colors[i % colors.length] }))
   }
 
   const vendasPorDia = getVendasPorDia()
   const vendasPorPagamento = getVendasPorPagamento()
-
   const totalVendasPeriodo = vendas.reduce((a, v) => a + (v.ValorTotal || 0), 0)
   const totalEstoqueItens = estoque.reduce((a, e) => a + e.Entradas, 0)
   const totalEstoqueSaidas = estoque.reduce((a, e) => a + e.Saidas, 0)
 
+  if (loading) return <div className="flex items-center justify-center h-[60vh]"><div className="loading-spinner" /></div>
+
   return (
-    <div className="space-y-6">
-      <div className="flex items-center gap-2 mb-4">
-        <BarChart3 size={24} style={{ color: 'var(--primary)' }} />
-        <h2 className="text-xl font-bold" style={{ color: 'var(--foreground)' }}>Relatorios</h2>
+    <div className="space-y-8 animate-fade-in">
+      <div>
+        <h1 className="page-title">Relatorios</h1>
+        <p className="page-subtitle">Analises e graficos do seu negocio</p>
       </div>
 
-      {/* Tipo selector */}
       <div className="flex gap-2 flex-wrap">
         {[
           { key: 'vendas' as const, label: 'Vendas' },
           { key: 'estoque' as const, label: 'Estoque' },
           { key: 'contador' as const, label: 'Contabil' },
         ].map((t) => (
-          <button
-            key={t.key}
-            onClick={() => setTipo(t.key)}
-            className="px-4 py-2 rounded-lg text-sm font-medium transition-colors"
-            style={{
-              background: tipo === t.key ? 'var(--primary)' : 'var(--muted)',
-              color: tipo === t.key ? 'var(--primary-foreground)' : 'var(--foreground)',
-            }}
-          >
-            {t.label}
-          </button>
+          <button key={t.key} onClick={() => setTipo(t.key)} className="px-5 py-2.5 rounded-xl text-[13px] font-medium transition-all duration-200" style={{
+            background: tipo === t.key ? 'rgba(59, 130, 246, 0.15)' : 'var(--bg-card)',
+            color: tipo === t.key ? 'var(--accent-blue-light)' : 'var(--text-muted)',
+            border: `1px solid ${tipo === t.key ? 'rgba(59, 130, 246, 0.3)' : 'var(--border-color)'}`,
+          }}>{t.label}</button>
         ))}
       </div>
 
-      {/* Periodo filters */}
       {tipo === 'vendas' && (
-        <div className="flex items-center gap-3 flex-wrap">
-          <Calendar size={16} style={{ color: 'var(--muted-foreground)' }} />
+        <div className="flex items-center gap-3">
+          <Calendar size={16} style={{ color: 'var(--text-muted)' }} />
           {['dia', 'semana', 'mes'].map((p) => (
-            <button
-              key={p}
-              onClick={() => setPeriodo(p)}
-              className="px-3 py-1.5 rounded-lg text-xs font-medium"
-              style={{
-                background: periodo === p ? 'var(--primary)' : 'var(--muted)',
-                color: periodo === p ? 'var(--primary-foreground)' : 'var(--foreground)',
-              }}
-            >
-              {p === 'dia' ? 'Dia' : p === 'semana' ? 'Semana' : 'Mes'}
-            </button>
+            <button key={p} onClick={() => setPeriodo(p)} className="px-4 py-2 rounded-xl text-[12px] font-medium transition-all" style={{
+              background: periodo === p ? 'rgba(59, 130, 246, 0.15)' : 'var(--bg-card)',
+              color: periodo === p ? 'var(--accent-blue-light)' : 'var(--text-muted)',
+              border: `1px solid ${periodo === p ? 'rgba(59, 130, 246, 0.3)' : 'var(--border-color)'}`,
+            }}>{p === 'dia' ? 'Dia' : p === 'semana' ? 'Semana' : 'Mes'}</button>
           ))}
         </div>
       )}
 
       {tipo === 'contador' && (
-        <div className="flex items-center gap-3 flex-wrap">
+        <div className="flex items-end gap-3">
           <div>
-            <label className="block text-xs mb-1" style={{ color: 'var(--muted-foreground)' }}>Inicio</label>
-            <input
-              type="date"
-              value={dataInicio}
-              onChange={(e) => setDataInicio(e.target.value)}
-              className="px-3 py-1.5 rounded-lg text-sm"
-              style={{ background: 'var(--card)', border: '1px solid var(--border)', color: 'var(--foreground)' }}
-            />
+            <label className="block text-[11px] font-medium mb-1.5" style={{ color: 'var(--text-muted)' }}>Inicio</label>
+            <input type="date" value={dataInicio} onChange={(e) => setDataInicio(e.target.value)} className="search-input" style={{ paddingLeft: '16px' }} />
           </div>
           <div>
-            <label className="block text-xs mb-1" style={{ color: 'var(--muted-foreground)' }}>Fim</label>
-            <input
-              type="date"
-              value={dataFim}
-              onChange={(e) => setDataFim(e.target.value)}
-              className="px-3 py-1.5 rounded-lg text-sm"
-              style={{ background: 'var(--card)', border: '1px solid var(--border)', color: 'var(--foreground)' }}
-            />
+            <label className="block text-[11px] font-medium mb-1.5" style={{ color: 'var(--text-muted)' }}>Fim</label>
+            <input type="date" value={dataFim} onChange={(e) => setDataFim(e.target.value)} className="search-input" style={{ paddingLeft: '16px' }} />
           </div>
         </div>
       )}
 
-      {loading ? (
-        <div className="flex items-center justify-center h-64">
-          <div className="animate-spin rounded-full h-8 w-8 border-b-2" style={{ borderColor: 'var(--primary)' }} />
+      {tipo === 'vendas' && (
+        <div className="space-y-6">
+          <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
+            <div className="stat-card stat-card-blue">
+              <p className="text-[12px] font-medium mb-1" style={{ color: 'var(--text-muted)' }}>Total Vendas</p>
+              <p className="text-[24px] font-bold" style={{ color: 'var(--text-primary)' }}>{vendas.length}</p>
+            </div>
+            <div className="stat-card stat-card-green">
+              <p className="text-[12px] font-medium mb-1" style={{ color: 'var(--text-muted)' }}>Faturamento</p>
+              <p className="text-[24px] font-bold" style={{ color: 'var(--accent-green)' }}>R$ {totalVendasPeriodo.toFixed(2)}</p>
+            </div>
+            <div className="stat-card stat-card-purple">
+              <p className="text-[12px] font-medium mb-1" style={{ color: 'var(--text-muted)' }}>Ticket Medio</p>
+              <p className="text-[24px] font-bold" style={{ color: 'var(--text-primary)' }}>R$ {vendas.length > 0 ? (totalVendasPeriodo / vendas.length).toFixed(2) : '0.00'}</p>
+            </div>
+          </div>
+
+          {vendasPorDia.length > 0 && (
+            <div className="gradient-card p-5">
+              <h3 className="section-title">Vendas por Dia</h3>
+              <ResponsiveContainer width="100%" height={320}>
+                <BarChart data={vendasPorDia}>
+                  <CartesianGrid strokeDasharray="3 3" stroke="var(--border-color)" />
+                  <XAxis dataKey="name" tick={{ fontSize: 11, fill: 'var(--text-muted)' }} />
+                  <YAxis tick={{ fontSize: 11, fill: 'var(--text-muted)' }} />
+                  <Tooltip contentStyle={{ background: 'var(--bg-card)', border: '1px solid var(--border-color)', borderRadius: 12, color: 'var(--text-primary)' }} formatter={(value) => [`R$ ${Number(value).toFixed(2)}`, 'Valor']} />
+                  <Bar dataKey="valor" fill="var(--accent-blue)" radius={[6, 6, 0, 0]} />
+                </BarChart>
+              </ResponsiveContainer>
+            </div>
+          )}
+
+          {vendasPorPagamento.length > 0 && (
+            <div className="gradient-card p-5">
+              <h3 className="section-title">Vendas por Forma de Pagamento</h3>
+              <ResponsiveContainer width="100%" height={320}>
+                <PieChart>
+                  <Pie data={vendasPorPagamento} cx="50%" cy="50%" outerRadius={110} dataKey="value" label={({ name, value }) => `${name}: R$ ${value.toFixed(2)}`}>
+                    {vendasPorPagamento.map((entry, i) => <Cell key={i} fill={entry.color} />)}
+                  </Pie>
+                  <Tooltip contentStyle={{ background: 'var(--bg-card)', border: '1px solid var(--border-color)', borderRadius: 12 }} formatter={(value) => `R$ ${Number(value).toFixed(2)}`} />
+                  <Legend />
+                </PieChart>
+              </ResponsiveContainer>
+            </div>
+          )}
         </div>
-      ) : (
-        <>
-          {/* Vendas Report */}
-          {tipo === 'vendas' && (
-            <div className="space-y-6">
-              <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
-                <div className="rounded-xl p-4" style={{ background: 'var(--card)', border: '1px solid var(--border)' }}>
-                  <p className="text-sm" style={{ color: 'var(--muted-foreground)' }}>Total Vendas</p>
-                  <p className="text-2xl font-bold" style={{ color: 'var(--foreground)' }}>{vendas.length}</p>
-                </div>
-                <div className="rounded-xl p-4" style={{ background: 'var(--card)', border: '1px solid var(--border)' }}>
-                  <p className="text-sm" style={{ color: 'var(--muted-foreground)' }}>Faturamento</p>
-                  <p className="text-2xl font-bold" style={{ color: '#22c55e' }}>R$ {totalVendasPeriodo.toFixed(2)}</p>
-                </div>
-                <div className="rounded-xl p-4" style={{ background: 'var(--card)', border: '1px solid var(--border)' }}>
-                  <p className="text-sm" style={{ color: 'var(--muted-foreground)' }}>Ticket Medio</p>
-                  <p className="text-2xl font-bold" style={{ color: 'var(--foreground)' }}>
-                    R$ {vendas.length > 0 ? (totalVendasPeriodo / vendas.length).toFixed(2) : '0.00'}
-                  </p>
-                </div>
-              </div>
+      )}
 
-              {/* Grafico vendas por dia */}
-              {vendasPorDia.length > 0 && (
-                <div className="rounded-xl p-4" style={{ background: 'var(--card)', border: '1px solid var(--border)' }}>
-                  <h3 className="font-semibold mb-4" style={{ color: 'var(--foreground)' }}>Vendas por Dia</h3>
-                  <ResponsiveContainer width="100%" height={300}>
-                    <BarChart data={vendasPorDia}>
-                      <CartesianGrid strokeDasharray="3 3" stroke="var(--border)" />
-                      <XAxis dataKey="name" tick={{ fontSize: 12, fill: 'var(--muted-foreground)' }} />
-                      <YAxis tick={{ fontSize: 12, fill: 'var(--muted-foreground)' }} />
-                      <Tooltip
-                        contentStyle={{ background: 'var(--card)', border: '1px solid var(--border)', borderRadius: 8 }}
-                        formatter={(value) => [`R$ ${Number(value).toFixed(2)}`, 'Valor']}
-                      />
-                      <Bar dataKey="valor" fill="var(--primary)" radius={[4, 4, 0, 0]} />
-                    </BarChart>
-                  </ResponsiveContainer>
-                </div>
-              )}
+      {tipo === 'estoque' && (
+        <div className="space-y-4">
+          <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
+            <div className="stat-card stat-card-green"><p className="text-[12px] font-medium mb-1" style={{ color: 'var(--text-muted)' }}>Total Entradas</p><p className="text-[24px] font-bold" style={{ color: 'var(--accent-green)' }}>{totalEstoqueItens}</p></div>
+            <div className="stat-card stat-card-red"><p className="text-[12px] font-medium mb-1" style={{ color: 'var(--text-muted)' }}>Total Saidas</p><p className="text-[24px] font-bold" style={{ color: 'var(--accent-red)' }}>{totalEstoqueSaidas}</p></div>
+            <div className="stat-card stat-card-blue"><p className="text-[12px] font-medium mb-1" style={{ color: 'var(--text-muted)' }}>Produtos</p><p className="text-[24px] font-bold" style={{ color: 'var(--text-primary)' }}>{estoque.length}</p></div>
+          </div>
+          <div className="gradient-card overflow-hidden">
+            <table className="w-full table-modern">
+              <thead><tr><th>Produto</th><th>Entradas</th><th>Saidas</th><th>Saldo</th></tr></thead>
+              <tbody>
+                {estoque.map((e, i) => (
+                  <tr key={i} style={{ animation: `fadeIn 0.3s ease-out ${i * 30}ms forwards`, opacity: 0 }}>
+                    <td style={{ color: 'var(--text-primary)', fontWeight: 500 }}>{e.ProdutoNome}</td>
+                    <td><span className="font-bold" style={{ color: 'var(--accent-green)' }}>+{e.Entradas}</span></td>
+                    <td><span className="font-bold" style={{ color: 'var(--accent-red)' }}>-{e.Saidas}</span></td>
+                    <td><span className="font-bold" style={{ color: 'var(--text-primary)' }}>{e.Saldo}</span></td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+        </div>
+      )}
 
-              {/* Grafico vendas por pagamento */}
-              {vendasPorPagamento.length > 0 && (
-                <div className="rounded-xl p-4" style={{ background: 'var(--card)', border: '1px solid var(--border)' }}>
-                  <h3 className="font-semibold mb-4" style={{ color: 'var(--foreground)' }}>Vendas por Forma de Pagamento</h3>
-                  <ResponsiveContainer width="100%" height={300}>
-                    <PieChart>
-                      <Pie
-                        data={vendasPorPagamento}
-                        cx="50%"
-                        cy="50%"
-                        outerRadius={100}
-                        dataKey="value"
-                        label={({ name, value }) => `${name}: R$ ${value.toFixed(2)}`}
-                      >
-                        {vendasPorPagamento.map((entry, i) => (
-                          <Cell key={i} fill={entry.color} />
-                        ))}
-                      </Pie>
-                      <Tooltip formatter={(value) => `R$ ${Number(value).toFixed(2)}`} />
-                      <Legend />
-                    </PieChart>
-                  </ResponsiveContainer>
-                </div>
-              )}
-            </div>
-          )}
-
-          {/* Estoque Report */}
-          {tipo === 'estoque' && (
-            <div className="space-y-4">
-              <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
-                <div className="rounded-xl p-4" style={{ background: 'var(--card)', border: '1px solid var(--border)' }}>
-                  <p className="text-sm" style={{ color: 'var(--muted-foreground)' }}>Total Entradas</p>
-                  <p className="text-2xl font-bold" style={{ color: '#22c55e' }}>{totalEstoqueItens}</p>
-                </div>
-                <div className="rounded-xl p-4" style={{ background: 'var(--card)', border: '1px solid var(--border)' }}>
-                  <p className="text-sm" style={{ color: 'var(--muted-foreground)' }}>Total Saidas</p>
-                  <p className="text-2xl font-bold" style={{ color: '#ef4444' }}>{totalEstoqueSaidas}</p>
-                </div>
-                <div className="rounded-xl p-4" style={{ background: 'var(--card)', border: '1px solid var(--border)' }}>
-                  <p className="text-sm" style={{ color: 'var(--muted-foreground)' }}>Produtos</p>
-                  <p className="text-2xl font-bold" style={{ color: 'var(--foreground)' }}>{estoque.length}</p>
-                </div>
-              </div>
-
-              <div className="rounded-xl shadow-sm overflow-hidden" style={{ background: 'var(--card)', border: '1px solid var(--border)' }}>
-                <div className="overflow-x-auto">
-                  <table className="w-full text-sm">
-                    <thead>
-                      <tr style={{ background: 'var(--muted)' }}>
-                        <th className="text-left p-3 font-medium" style={{ color: 'var(--muted-foreground)' }}>Produto</th>
-                        <th className="text-left p-3 font-medium" style={{ color: 'var(--muted-foreground)' }}>Entradas</th>
-                        <th className="text-left p-3 font-medium" style={{ color: 'var(--muted-foreground)' }}>Saidas</th>
-                        <th className="text-left p-3 font-medium" style={{ color: 'var(--muted-foreground)' }}>Saldo</th>
-                      </tr>
-                    </thead>
-                    <tbody>
-                      {estoque.map((e, i) => (
-                        <tr key={i} style={{ borderTop: '1px solid var(--border)' }}>
-                          <td className="p-3" style={{ color: 'var(--foreground)' }}>{e.ProdutoNome}</td>
-                          <td className="p-3 font-medium" style={{ color: '#22c55e' }}>+{e.Entradas}</td>
-                          <td className="p-3 font-medium" style={{ color: '#ef4444' }}>-{e.Saidas}</td>
-                          <td className="p-3 font-bold" style={{ color: 'var(--foreground)' }}>{e.Saldo}</td>
-                        </tr>
-                      ))}
-                    </tbody>
-                  </table>
-                </div>
-              </div>
-            </div>
-          )}
-
-          {/* Contador Report */}
-          {tipo === 'contador' && (
-            <div className="rounded-xl shadow-sm overflow-hidden" style={{ background: 'var(--card)', border: '1px solid var(--border)' }}>
-              <div className="overflow-x-auto">
-                <table className="w-full text-sm">
-                  <thead>
-                    <tr style={{ background: 'var(--muted)' }}>
-                      <th className="text-left p-3 font-medium" style={{ color: 'var(--muted-foreground)' }}>Venda</th>
-                      <th className="text-left p-3 font-medium" style={{ color: 'var(--muted-foreground)' }}>Data</th>
-                      <th className="text-left p-3 font-medium" style={{ color: 'var(--muted-foreground)' }}>Cliente</th>
-                      <th className="text-left p-3 font-medium" style={{ color: 'var(--muted-foreground)' }}>Valor</th>
-                      <th className="text-left p-3 font-medium" style={{ color: 'var(--muted-foreground)' }}>Pagamento</th>
-                      <th className="text-left p-3 font-medium" style={{ color: 'var(--muted-foreground)' }}>NF-e</th>
-                    </tr>
-                  </thead>
-                  <tbody>
-                    {contador.length === 0 ? (
-                      <tr>
-                        <td colSpan={6} className="p-4 text-center" style={{ color: 'var(--muted-foreground)' }}>
-                          Nenhum dado encontrado para o periodo selecionado
-                        </td>
-                      </tr>
-                    ) : (
-                      contador.map((c, i) => (
-                        <tr key={i} style={{ borderTop: '1px solid var(--border)' }}>
-                          <td className="p-3 font-medium" style={{ color: 'var(--foreground)' }}>#{c.VendaID}</td>
-                          <td className="p-3" style={{ color: 'var(--muted-foreground)' }}>{c.Data}</td>
-                          <td className="p-3" style={{ color: 'var(--foreground)' }}>{c.Cliente}</td>
-                          <td className="p-3 font-bold" style={{ color: '#22c55e' }}>R$ {(c.ValorTotal || 0).toFixed(2)}</td>
-                          <td className="p-3" style={{ color: 'var(--foreground)' }}>{c.FormaPagamento}</td>
-                          <td className="p-3">
-                            <span
-                              className="px-2 py-1 rounded text-xs font-medium"
-                              style={{
-                                background: c.StatusNF === 'autorizada' ? '#dcfce7' : c.StatusNF === 'pendente' ? '#fffbeb' : '#f1f5f9',
-                                color: c.StatusNF === 'autorizada' ? '#166534' : c.StatusNF === 'pendente' ? '#92400e' : '#64748b',
-                              }}
-                            >
-                              {c.StatusNF || 'N/A'}
-                            </span>
-                          </td>
-                        </tr>
-                      ))
-                    )}
-                  </tbody>
-                </table>
-              </div>
-            </div>
-          )}
-        </>
+      {tipo === 'contador' && (
+        <div className="gradient-card overflow-hidden">
+          <table className="w-full table-modern">
+            <thead><tr><th>Venda</th><th>Data</th><th>Cliente</th><th>Valor</th><th>Pagamento</th><th>NF-e</th></tr></thead>
+            <tbody>
+              {contador.length === 0 ? (
+                <tr><td colSpan={6} style={{ textAlign: 'center', color: 'var(--text-muted)', padding: '40px' }}>Nenhum dado encontrado</td></tr>
+              ) : contador.map((c, i) => (
+                <tr key={i} style={{ animation: `fadeIn 0.3s ease-out ${i * 30}ms forwards`, opacity: 0 }}>
+                  <td><span className="font-mono font-semibold" style={{ color: 'var(--accent-blue-light)' }}>#{c.VendaID}</span></td>
+                  <td style={{ color: 'var(--text-muted)' }}>{c.Data}</td>
+                  <td style={{ color: 'var(--text-primary)' }}>{c.Cliente}</td>
+                  <td><span className="font-bold" style={{ color: 'var(--accent-green)' }}>R$ {(c.ValorTotal || 0).toFixed(2)}</span></td>
+                  <td><span className="badge badge-info">{c.FormaPagamento}</span></td>
+                  <td>
+                    <span className={`badge ${c.StatusNF === 'autorizada' ? 'badge-success' : c.StatusNF === 'pendente' ? 'badge-warning' : 'badge-info'}`}>
+                      {c.StatusNF || 'N/A'}
+                    </span>
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
       )}
     </div>
   )

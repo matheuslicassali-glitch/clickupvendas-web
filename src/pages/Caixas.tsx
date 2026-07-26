@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react'
-import { Wallet, ChevronDown, ChevronUp } from 'lucide-react'
+import { Wallet, ChevronDown, ChevronUp, Minus, Plus } from 'lucide-react'
 import { listarHistoricoCaixa, listarMovimentacoesCaixa, type CaixaSessao, type CaixaMovimentacao } from '../api'
 
 export default function Caixas() {
@@ -12,180 +12,123 @@ export default function Caixas() {
   useEffect(() => { loadData() }, [])
 
   async function loadData() {
-    try {
-      const res = await listarHistoricoCaixa()
-      setSessoes(res.data)
-    } catch (err) {
-      console.error('Erro ao carregar caixas:', err)
-    } finally {
-      setLoading(false)
-    }
+    try { const res = await listarHistoricoCaixa(); setSessoes(res.data) } catch (err) { console.error(err) } finally { setLoading(false) }
   }
 
   async function toggleExpand(id: number) {
-    if (expandedId === id) {
-      setExpandedId(null)
-      setMovimentacoes([])
-      return
-    }
+    if (expandedId === id) { setExpandedId(null); setMovimentacoes([]); return }
     setExpandedId(id)
     setLoadingMovs(true)
-    try {
-      const res = await listarMovimentacoesCaixa(id)
-      setMovimentacoes(res.data)
-    } catch (err) {
-      console.error('Erro ao carregar movimentacoes:', err)
-    } finally {
-      setLoadingMovs(false)
-    }
+    try { const res = await listarMovimentacoesCaixa(id); setMovimentacoes(res.data) } catch (err) { console.error(err) } finally { setLoadingMovs(false) }
   }
 
-  function formatCurrency(v: number) {
-    return `R$ ${(v || 0).toFixed(2)}`
-  }
+  function formatCurrency(v: number) { return `R$ ${(v || 0).toFixed(2)}` }
+  function getMovimentacaoTotal(movs: CaixaMovimentacao[], tipo: string) { return movs.filter((m) => m.Tipo === tipo).reduce((a, m) => a + (m.Valor || 0), 0) }
 
-  function getMovimentacaoTotal(movs: CaixaMovimentacao[], tipo: string) {
-    return movs.filter((m) => m.Tipo === tipo).reduce((a, m) => a + (m.Valor || 0), 0)
-  }
-
-  if (loading) {
-    return (
-      <div className="flex items-center justify-center h-64">
-        <div className="animate-spin rounded-full h-8 w-8 border-b-2" style={{ borderColor: 'var(--primary)' }} />
-      </div>
-    )
-  }
+  if (loading) return <div className="flex items-center justify-center h-[60vh]"><div className="loading-spinner" /></div>
 
   return (
-    <div className="space-y-6">
-      <div className="flex items-center gap-2 mb-4">
-        <Wallet size={24} style={{ color: 'var(--primary)' }} />
-        <h2 className="text-xl font-bold" style={{ color: 'var(--foreground)' }}>Historico de Caixas</h2>
+    <div className="space-y-8 animate-fade-in">
+      <div>
+        <h1 className="page-title">Caixas</h1>
+        <p className="page-subtitle">Historico de sessoes de caixa</p>
       </div>
 
       {sessoes.length === 0 ? (
-        <div className="text-center py-12 rounded-xl" style={{ background: 'var(--card)', border: '1px solid var(--border)' }}>
-          <Wallet size={48} className="mx-auto mb-4" style={{ color: 'var(--muted-foreground)' }} />
-          <p style={{ color: 'var(--muted-foreground)' }}>Nenhuma sessao de caixa encontrada</p>
+        <div className="gradient-card">
+          <div className="empty-state py-16">
+            <Wallet size={48} style={{ color: 'var(--text-muted)', opacity: 0.2 }} />
+            <p className="text-sm mt-4" style={{ color: 'var(--text-muted)' }}>Nenhuma sessao de caixa encontrada</p>
+          </div>
         </div>
       ) : (
         <div className="space-y-3">
-          {sessoes.map((sessao) => (
-            <div
-              key={sessao.ID}
-              className="rounded-xl overflow-hidden"
-              style={{ background: 'var(--card)', border: '1px solid var(--border)' }}
-            >
-              {/* Header */}
+          {sessoes.map((sessao, i) => (
+            <div key={sessao.ID} className="gradient-card overflow-hidden" style={{ animation: `fadeIn 0.3s ease-out ${i * 50}ms forwards`, opacity: 0 }}>
               <div
-                className="flex items-center justify-between p-4 cursor-pointer hover:opacity-90"
+                className="flex items-center justify-between p-5 cursor-pointer transition-all duration-200 hover:bg-white/[0.02]"
                 onClick={() => toggleExpand(sessao.ID)}
-                style={{ background: sessao.Status === 'aberto' ? '#f0fdf4' : 'var(--card)' }}
               >
                 <div className="flex items-center gap-4">
+                  <div className="w-12 h-12 rounded-2xl flex items-center justify-center" style={{ background: sessao.Status === 'aberto' ? 'rgba(16, 185, 129, 0.12)' : 'rgba(100, 116, 139, 0.12)' }}>
+                    <Wallet size={20} style={{ color: sessao.Status === 'aberto' ? 'var(--accent-green)' : 'var(--text-muted)' }} />
+                  </div>
                   <div>
-                    <p className="font-semibold" style={{ color: 'var(--foreground)' }}>
-                      Caixa #{sessao.ID}
-                    </p>
-                    <p className="text-sm" style={{ color: 'var(--muted-foreground)' }}>
+                    <p className="text-[15px] font-semibold" style={{ color: 'var(--text-primary)' }}>Caixa #{sessao.ID}</p>
+                    <p className="text-[12px]" style={{ color: 'var(--text-muted)' }}>
                       Aberto: {new Date(sessao.DataAbertura).toLocaleString('pt-BR')}
-                      {sessao.DataFechamento && (
-                        <> | Fechado: {new Date(sessao.DataFechamento).toLocaleString('pt-BR')}</>
-                      )}
+                      {sessao.DataFechamento && <> | Fechado: {new Date(sessao.DataFechamento).toLocaleString('pt-BR')}</>}
                     </p>
                   </div>
                 </div>
-                <div className="flex items-center gap-4">
-                  <span
-                    className="px-3 py-1 rounded-full text-xs font-medium"
-                    style={{
-                      background: sessao.Status === 'aberto' ? '#dcfce7' : '#f1f5f9',
-                      color: sessao.Status === 'aberto' ? '#166534' : '#64748b',
-                    }}
-                  >
+                <div className="flex items-center gap-5">
+                  <span className={`badge ${sessao.Status === 'aberto' ? 'badge-success' : 'badge-info'}`}>
                     {sessao.Status === 'aberto' ? 'Aberto' : 'Fechado'}
                   </span>
                   <div className="text-right">
-                    <p className="text-sm" style={{ color: 'var(--muted-foreground)' }}>Abertura</p>
-                    <p className="font-bold" style={{ color: 'var(--foreground)' }}>{formatCurrency(sessao.ValorAbertura)}</p>
+                    <p className="text-[11px] font-medium" style={{ color: 'var(--text-muted)' }}>Abertura</p>
+                    <p className="text-[15px] font-bold" style={{ color: 'var(--text-primary)' }}>{formatCurrency(sessao.ValorAbertura)}</p>
                   </div>
                   {sessao.ValorFechamento != null && (
                     <div className="text-right">
-                      <p className="text-sm" style={{ color: 'var(--muted-foreground)' }}>Fechamento</p>
-                      <p className="font-bold" style={{ color: sessao.ValorFechamento >= sessao.ValorAbertura ? '#22c55e' : '#ef4444' }}>
+                      <p className="text-[11px] font-medium" style={{ color: 'var(--text-muted)' }}>Fechamento</p>
+                      <p className="text-[15px] font-bold" style={{ color: sessao.ValorFechamento >= sessao.ValorAbertura ? 'var(--accent-green)' : 'var(--accent-red)' }}>
                         {formatCurrency(sessao.ValorFechamento)}
                       </p>
                     </div>
                   )}
-                  {expandedId === sessao.ID ? <ChevronUp size={20} /> : <ChevronDown size={20} />}
+                  {expandedId === sessao.ID ? <ChevronUp size={20} style={{ color: 'var(--text-muted)' }} /> : <ChevronDown size={20} style={{ color: 'var(--text-muted)' }} />}
                 </div>
               </div>
 
-              {/* Movimentacoes */}
               {expandedId === sessao.ID && (
-                <div style={{ borderTop: '1px solid var(--border)' }}>
+                <div style={{ borderTop: '1px solid var(--border-color)' }} className="p-5">
                   {loadingMovs ? (
-                    <div className="p-4 text-center" style={{ color: 'var(--muted-foreground)' }}>Carregando movimentacoes...</div>
+                    <div className="flex justify-center py-6"><div className="loading-spinner" /></div>
                   ) : movimentacoes.length === 0 ? (
-                    <div className="p-4 text-center" style={{ color: 'var(--muted-foreground)' }}>Nenhuma movimentacao</div>
+                    <p className="text-center py-6 text-[13px]" style={{ color: 'var(--text-muted)' }}>Nenhuma movimentacao</p>
                   ) : (
-                    <div className="p-4">
-                      <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 mb-4">
-                        <div className="p-3 rounded-lg" style={{ background: '#dcfce7' }}>
-                          <p className="text-xs" style={{ color: '#166534' }}>Entradas</p>
-                          <p className="font-bold" style={{ color: '#166534' }}>
-                            {formatCurrency(getMovimentacaoTotal(movimentacoes, 'entrada'))}
-                          </p>
+                    <>
+                      <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 mb-5">
+                        <div className="p-4 rounded-xl" style={{ background: 'rgba(16, 185, 129, 0.08)', border: '1px solid rgba(16, 185, 129, 0.15)' }}>
+                          <p className="text-[11px] font-medium" style={{ color: 'var(--accent-green)' }}>Entradas</p>
+                          <p className="text-[16px] font-bold mt-1" style={{ color: 'var(--accent-green)' }}>{formatCurrency(getMovimentacaoTotal(movimentacoes, 'entrada'))}</p>
                         </div>
-                        <div className="p-3 rounded-lg" style={{ background: '#fef2f2' }}>
-                          <p className="text-xs" style={{ color: '#991b1b' }}>Saidas</p>
-                          <p className="font-bold" style={{ color: '#991b1b' }}>
-                            {formatCurrency(getMovimentacaoTotal(movimentacoes, 'saida'))}
-                          </p>
+                        <div className="p-4 rounded-xl" style={{ background: 'rgba(239, 68, 68, 0.08)', border: '1px solid rgba(239, 68, 68, 0.15)' }}>
+                          <p className="text-[11px] font-medium" style={{ color: 'var(--accent-red)' }}>Saidas</p>
+                          <p className="text-[16px] font-bold mt-1" style={{ color: 'var(--accent-red)' }}>{formatCurrency(getMovimentacaoTotal(movimentacoes, 'saida'))}</p>
                         </div>
-                        <div className="p-3 rounded-lg" style={{ background: '#eff6ff' }}>
-                          <p className="text-xs" style={{ color: '#1e40af' }}>Suprimento</p>
-                          <p className="font-bold" style={{ color: '#1e40af' }}>
-                            {formatCurrency(getMovimentacaoTotal(movimentacoes, 'suprimento'))}
-                          </p>
+                        <div className="p-4 rounded-xl" style={{ background: 'rgba(59, 130, 246, 0.08)', border: '1px solid rgba(59, 130, 246, 0.15)' }}>
+                          <p className="text-[11px] font-medium" style={{ color: 'var(--accent-blue)' }}>Suprimento</p>
+                          <p className="text-[16px] font-bold mt-1" style={{ color: 'var(--accent-blue)' }}>{formatCurrency(getMovimentacaoTotal(movimentacoes, 'suprimento'))}</p>
                         </div>
-                        <div className="p-3 rounded-lg" style={{ background: '#fffbeb' }}>
-                          <p className="text-xs" style={{ color: '#92400e' }}>Sangria</p>
-                          <p className="font-bold" style={{ color: '#92400e' }}>
-                            {formatCurrency(getMovimentacaoTotal(movimentacoes, 'sangria'))}
-                          </p>
+                        <div className="p-4 rounded-xl" style={{ background: 'rgba(245, 158, 11, 0.08)', border: '1px solid rgba(245, 158, 11, 0.15)' }}>
+                          <p className="text-[11px] font-medium" style={{ color: 'var(--accent-amber)' }}>Sangria</p>
+                          <p className="text-[16px] font-bold mt-1" style={{ color: 'var(--accent-amber)' }}>{formatCurrency(getMovimentacaoTotal(movimentacoes, 'sangria'))}</p>
                         </div>
                       </div>
-
                       <div className="space-y-2">
                         {movimentacoes.map((mov) => (
-                          <div
-                            key={mov.ID}
-                            className="flex items-center justify-between p-3 rounded-lg"
-                            style={{ background: 'var(--muted)' }}
-                          >
-                            <div>
-                              <p className="text-sm font-medium" style={{ color: 'var(--foreground)' }}>{mov.Descricao}</p>
-                              <p className="text-xs" style={{ color: 'var(--muted-foreground)' }}>
-                                {new Date(mov.Data).toLocaleString('pt-BR')}
-                              </p>
+                          <div key={mov.ID} className="flex items-center justify-between p-3 rounded-xl transition-all hover:bg-white/[0.02]" style={{ background: 'var(--bg-surface)' }}>
+                            <div className="flex items-center gap-3">
+                              <div className="w-9 h-9 rounded-xl flex items-center justify-center" style={{ background: ['entrada', 'suprimento'].includes(mov.Tipo) ? 'rgba(16, 185, 129, 0.12)' : 'rgba(239, 68, 68, 0.12)' }}>
+                                {['entrada', 'suprimento'].includes(mov.Tipo) ? <Plus size={14} style={{ color: 'var(--accent-green)' }} /> : <Minus size={14} style={{ color: 'var(--accent-red)' }} />}
+                              </div>
+                              <div>
+                                <p className="text-[13px] font-medium" style={{ color: 'var(--text-primary)' }}>{mov.Descricao}</p>
+                                <p className="text-[11px]" style={{ color: 'var(--text-muted)' }}>{new Date(mov.Data).toLocaleString('pt-BR')}</p>
+                              </div>
                             </div>
                             <div className="text-right">
-                              <span
-                                className="text-sm font-bold"
-                                style={{
-                                  color: ['entrada', 'suprimento'].includes(mov.Tipo) ? '#22c55e' : '#ef4444',
-                                }}
-                              >
-                                {['entrada', 'suprimento'].includes(mov.Tipo) ? '+' : '-'}
-                                {formatCurrency(mov.Valor)}
+                              <span className="text-[14px] font-bold" style={{ color: ['entrada', 'suprimento'].includes(mov.Tipo) ? 'var(--accent-green)' : 'var(--accent-red)' }}>
+                                {['entrada', 'suprimento'].includes(mov.Tipo) ? '+' : '-'}{formatCurrency(mov.Valor)}
                               </span>
-                              <p className="text-xs" style={{ color: 'var(--muted-foreground)' }}>{mov.Tipo}</p>
+                              <p className="text-[11px]" style={{ color: 'var(--text-muted)' }}>{mov.Tipo}</p>
                             </div>
                           </div>
                         ))}
                       </div>
-                    </div>
+                    </>
                   )}
                 </div>
               )}

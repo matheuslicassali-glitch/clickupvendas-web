@@ -1,20 +1,10 @@
 import { useEffect, useState } from 'react'
-import { Plus, Edit2, Filter } from 'lucide-react'
-import { listarContas, salvarConta, type ContaFinanceira } from '../api'
+import { TrendingUp, TrendingDown, Clock, Filter } from 'lucide-react'
+import { listarContas, type ContaFinanceira } from '../api'
 
 export default function Financeiro() {
   const [contas, setContas] = useState<ContaFinanceira[]>([])
   const [filtro, setFiltro] = useState<string>('todos')
-  const [showModal, setShowModal] = useState(false)
-  const [editing, setEditing] = useState<ContaFinanceira | null>(null)
-  const [form, setForm] = useState({
-    Descricao: '',
-    Valor: '',
-    Tipo: 'receita',
-    Status: 'pendente',
-    DataVencimento: '',
-    Observacoes: '',
-  })
   const [loading, setLoading] = useState(true)
 
   useEffect(() => { loadContas() }, [])
@@ -23,160 +13,97 @@ export default function Financeiro() {
     try {
       const res = await listarContas()
       setContas(res.data)
-    } catch (err) {
-      console.error('Erro ao carregar contas:', err)
-    } finally {
-      setLoading(false)
-    }
+    } catch (err) { console.error('Erro ao carregar contas:', err) } finally { setLoading(false) }
   }
 
-  const contasFiltradas = contas.filter((c) => {
-    if (filtro === 'todos') return true
-    return c.Status === filtro
-  })
-
+  const contasFiltradas = contas.filter((c) => filtro === 'todos' || c.Status === filtro)
   const totalReceitas = contas.filter((c) => c.Tipo === 'receita' && c.Status === 'pago').reduce((a, c) => a + (c.Valor || 0), 0)
   const totalDespesas = contas.filter((c) => c.Tipo === 'despesa' && c.Status === 'pago').reduce((a, c) => a + (c.Valor || 0), 0)
   const totalPendente = contas.filter((c) => c.Status === 'pendente').reduce((a, c) => a + (c.Valor || 0), 0)
 
-  function openNew() {
-    setEditing(null)
-    setForm({ Descricao: '', Valor: '', Tipo: 'receita', Status: 'pendente', DataVencimento: '', Observacoes: '' })
-    setShowModal(true)
-  }
-
-  function openEdit(c: ContaFinanceira) {
-    setEditing(c)
-    setForm({
-      Descricao: c.Descricao,
-      Valor: String(c.Valor),
-      Tipo: c.Tipo,
-      Status: c.Status,
-      DataVencimento: c.DataVencimento?.split('T')[0] || '',
-      Observacoes: c.Observacoes || '',
-    })
-    setShowModal(true)
-  }
-
-  async function handleSave() {
-    try {
-      await salvarConta({
-        ...(editing ? { ID: editing.ID } : {}),
-        Descricao: form.Descricao,
-        Valor: parseFloat(form.Valor),
-        Tipo: form.Tipo,
-        Status: form.Status,
-        DataVencimento: form.DataVencimento,
-        Observacoes: form.Observacoes,
-      })
-      setShowModal(false)
-      loadContas()
-    } catch (err) {
-      console.error('Erro ao salvar conta:', err)
-    }
-  }
-
-  if (loading) {
-    return (
-      <div className="flex items-center justify-center h-64">
-        <div className="animate-spin rounded-full h-8 w-8 border-b-2" style={{ borderColor: 'var(--primary)' }} />
-      </div>
-    )
-  }
+  if (loading) return <div className="flex items-center justify-center h-[60vh]"><div className="loading-spinner" /></div>
 
   return (
-    <div className="space-y-6">
-      {/* Resumo */}
+    <div className="space-y-8 animate-fade-in">
+      <div>
+        <h1 className="page-title">Financeiro</h1>
+        <p className="page-subtitle">Controle de receitas, despesas e contas</p>
+      </div>
+
       <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
-        <div className="rounded-xl p-4" style={{ background: '#dcfce7', border: '1px solid #bbf7d0' }}>
-          <p className="text-sm font-medium" style={{ color: '#166534' }}>Receitas Pagas</p>
-          <p className="text-2xl font-bold" style={{ color: '#166534' }}>R$ {totalReceitas.toFixed(2)}</p>
+        <div className="stat-card stat-card-green">
+          <div className="flex items-start justify-between mb-3">
+            <div className="icon-box" style={{ background: 'var(--gradient-green)' }}><TrendingUp size={20} className="text-white" /></div>
+          </div>
+          <p className="text-[12px] font-medium mb-1" style={{ color: 'var(--text-muted)' }}>Receitas Pagas</p>
+          <p className="text-[22px] font-bold" style={{ color: 'var(--accent-green)' }}>R$ {totalReceitas.toFixed(2)}</p>
         </div>
-        <div className="rounded-xl p-4" style={{ background: '#fef2f2', border: '1px solid #fecaca' }}>
-          <p className="text-sm font-medium" style={{ color: '#991b1b' }}>Despesas Pagas</p>
-          <p className="text-2xl font-bold" style={{ color: '#991b1b' }}>R$ {totalDespesas.toFixed(2)}</p>
+        <div className="stat-card stat-card-red">
+          <div className="flex items-start justify-between mb-3">
+            <div className="icon-box" style={{ background: 'var(--gradient-red)' }}><TrendingDown size={20} className="text-white" /></div>
+          </div>
+          <p className="text-[12px] font-medium mb-1" style={{ color: 'var(--text-muted)' }}>Despesas Pagas</p>
+          <p className="text-[22px] font-bold" style={{ color: 'var(--accent-red)' }}>R$ {totalDespesas.toFixed(2)}</p>
         </div>
-        <div className="rounded-xl p-4" style={{ background: '#fffbeb', border: '1px solid #fde68a' }}>
-          <p className="text-sm font-medium" style={{ color: '#92400e' }}>Pendentes</p>
-          <p className="text-2xl font-bold" style={{ color: '#92400e' }}>R$ {totalPendente.toFixed(2)}</p>
+        <div className="stat-card stat-card-amber">
+          <div className="flex items-start justify-between mb-3">
+            <div className="icon-box" style={{ background: 'var(--gradient-amber)' }}><Clock size={20} className="text-white" /></div>
+          </div>
+          <p className="text-[12px] font-medium mb-1" style={{ color: 'var(--text-muted)' }}>Pendentes</p>
+          <p className="text-[22px] font-bold" style={{ color: 'var(--accent-amber)' }}>R$ {totalPendente.toFixed(2)}</p>
         </div>
       </div>
 
-      {/* Toolbar */}
-      <div className="flex items-center justify-between gap-4 flex-wrap">
-        <div className="flex items-center gap-2">
-          <Filter size={16} style={{ color: 'var(--muted-foreground)' }} />
-          <select
-            value={filtro}
-            onChange={(e) => setFiltro(e.target.value)}
-            className="px-3 py-2 rounded-lg text-sm"
-            style={{ background: 'var(--card)', border: '1px solid var(--border)', color: 'var(--foreground)' }}
+      <div className="flex items-center gap-2">
+        <Filter size={16} style={{ color: 'var(--text-muted)' }} />
+        {[
+          { key: 'todos', label: 'Todos' },
+          { key: 'pendente', label: 'Pendentes' },
+          { key: 'pago', label: 'Pagos' },
+          { key: 'atrasado', label: 'Atrasados' },
+        ].map((f) => (
+          <button
+            key={f.key}
+            onClick={() => setFiltro(f.key)}
+            className="px-4 py-2 rounded-xl text-[13px] font-medium transition-all duration-200"
+            style={{
+              background: filtro === f.key ? 'rgba(59, 130, 246, 0.15)' : 'var(--bg-card)',
+              color: filtro === f.key ? 'var(--accent-blue-light)' : 'var(--text-muted)',
+              border: `1px solid ${filtro === f.key ? 'rgba(59, 130, 246, 0.3)' : 'var(--border-color)'}`,
+            }}
           >
-            <option value="todos">Todos</option>
-            <option value="pendente">Pendentes</option>
-            <option value="pago">Pagos</option>
-            <option value="atrasado">Atrasados</option>
-          </select>
-        </div>
-        <button
-          onClick={openNew}
-          className="flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-medium text-white"
-          style={{ background: 'var(--primary)' }}
-        >
-          <Plus size={16} /> Nova Conta
-        </button>
+            {f.label}
+          </button>
+        ))}
       </div>
 
-      {/* Table */}
-      <div className="rounded-xl shadow-sm overflow-hidden" style={{ background: 'var(--card)', border: '1px solid var(--border)' }}>
+      <div className="gradient-card overflow-hidden">
         <div className="overflow-x-auto">
-          <table className="w-full text-sm">
+          <table className="w-full table-modern">
             <thead>
-              <tr style={{ background: 'var(--muted)' }}>
-                <th className="text-left p-3 font-medium" style={{ color: 'var(--muted-foreground)' }}>Descricao</th>
-                <th className="text-left p-3 font-medium" style={{ color: 'var(--muted-foreground)' }}>Tipo</th>
-                <th className="text-left p-3 font-medium" style={{ color: 'var(--muted-foreground)' }}>Valor</th>
-                <th className="text-left p-3 font-medium" style={{ color: 'var(--muted-foreground)' }}>Vencimento</th>
-                <th className="text-left p-3 font-medium" style={{ color: 'var(--muted-foreground)' }}>Status</th>
-                <th className="text-right p-3 font-medium" style={{ color: 'var(--muted-foreground)' }}>Acoes</th>
+              <tr>
+                <th>Descricao</th>
+                <th>Tipo</th>
+                <th>Valor</th>
+                <th>Vencimento</th>
+                <th>Status</th>
               </tr>
             </thead>
             <tbody>
-              {contasFiltradas.map((conta) => (
-                <tr key={conta.ID} style={{ borderTop: '1px solid var(--border)' }}>
-                  <td className="p-3" style={{ color: 'var(--foreground)' }}>{conta.Descricao}</td>
-                  <td className="p-3">
-                    <span
-                      className="px-2 py-1 rounded text-xs font-medium"
-                      style={{
-                        background: conta.Tipo === 'receita' ? '#dcfce7' : '#fef2f2',
-                        color: conta.Tipo === 'receita' ? '#166534' : '#991b1b',
-                      }}
-                    >
+              {contasFiltradas.map((conta, i) => (
+                <tr key={conta.ID} style={{ animation: `fadeIn 0.3s ease-out ${i * 30}ms forwards`, opacity: 0 }}>
+                  <td style={{ color: 'var(--text-primary)', fontWeight: 500 }}>{conta.Descricao}</td>
+                  <td>
+                    <span className={`badge ${conta.Tipo === 'receita' ? 'badge-success' : 'badge-danger'}`}>
                       {conta.Tipo === 'receita' ? 'Receita' : 'Despesa'}
                     </span>
                   </td>
-                  <td className="p-3 font-medium" style={{ color: 'var(--foreground)' }}>
-                    R$ {(conta.Valor || 0).toFixed(2)}
-                  </td>
-                  <td className="p-3" style={{ color: 'var(--muted-foreground)' }}>
-                    {conta.DataVencimento ? new Date(conta.DataVencimento).toLocaleDateString('pt-BR') : '-'}
-                  </td>
-                  <td className="p-3">
-                    <span
-                      className="px-2 py-1 rounded text-xs font-medium"
-                      style={{
-                        background: conta.Status === 'pago' ? '#dcfce7' : conta.Status === 'atrasado' ? '#fef2f2' : '#fffbeb',
-                        color: conta.Status === 'pago' ? '#166534' : conta.Status === 'atrasado' ? '#991b1b' : '#92400e',
-                      }}
-                    >
+                  <td><span className="font-bold" style={{ color: 'var(--text-primary)' }}>R$ {(conta.Valor || 0).toFixed(2)}</span></td>
+                  <td style={{ color: 'var(--text-muted)' }}>{conta.DataVencimento ? new Date(conta.DataVencimento).toLocaleDateString('pt-BR') : '-'}</td>
+                  <td>
+                    <span className={`badge ${conta.Status === 'pago' ? 'badge-success' : conta.Status === 'atrasado' ? 'badge-danger' : 'badge-warning'}`}>
                       {conta.Status === 'pago' ? 'Pago' : conta.Status === 'atrasado' ? 'Atrasado' : 'Pendente'}
                     </span>
-                  </td>
-                  <td className="p-3 text-right">
-                    <button onClick={() => openEdit(conta)} className="p-1 rounded hover:opacity-80" style={{ color: 'var(--primary)' }}>
-                      <Edit2 size={16} />
-                    </button>
                   </td>
                 </tr>
               ))}
@@ -184,104 +111,6 @@ export default function Financeiro() {
           </table>
         </div>
       </div>
-
-      {/* Modal */}
-      {showModal && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50">
-          <div className="rounded-xl p-6 w-full max-w-md shadow-xl" style={{ background: 'var(--card)' }}>
-            <h3 className="text-lg font-semibold mb-4" style={{ color: 'var(--foreground)' }}>
-              {editing ? 'Editar Conta' : 'Nova Conta'}
-            </h3>
-            <div className="space-y-4">
-              <div>
-                <label className="block text-sm font-medium mb-1" style={{ color: 'var(--muted-foreground)' }}>Descricao</label>
-                <input
-                  value={form.Descricao}
-                  onChange={(e) => setForm({ ...form, Descricao: e.target.value })}
-                  className="w-full px-3 py-2 rounded-lg text-sm"
-                  style={{ background: 'var(--background)', border: '1px solid var(--border)', color: 'var(--foreground)' }}
-                />
-              </div>
-              <div className="grid grid-cols-2 gap-4">
-                <div>
-                  <label className="block text-sm font-medium mb-1" style={{ color: 'var(--muted-foreground)' }}>Valor</label>
-                  <input
-                    type="number"
-                    step="0.01"
-                    value={form.Valor}
-                    onChange={(e) => setForm({ ...form, Valor: e.target.value })}
-                    className="w-full px-3 py-2 rounded-lg text-sm"
-                    style={{ background: 'var(--background)', border: '1px solid var(--border)', color: 'var(--foreground)' }}
-                  />
-                </div>
-                <div>
-                  <label className="block text-sm font-medium mb-1" style={{ color: 'var(--muted-foreground)' }}>Tipo</label>
-                  <select
-                    value={form.Tipo}
-                    onChange={(e) => setForm({ ...form, Tipo: e.target.value })}
-                    className="w-full px-3 py-2 rounded-lg text-sm"
-                    style={{ background: 'var(--background)', border: '1px solid var(--border)', color: 'var(--foreground)' }}
-                  >
-                    <option value="receita">Receita</option>
-                    <option value="despesa">Despesa</option>
-                  </select>
-                </div>
-              </div>
-              <div className="grid grid-cols-2 gap-4">
-                <div>
-                  <label className="block text-sm font-medium mb-1" style={{ color: 'var(--muted-foreground)' }}>Vencimento</label>
-                  <input
-                    type="date"
-                    value={form.DataVencimento}
-                    onChange={(e) => setForm({ ...form, DataVencimento: e.target.value })}
-                    className="w-full px-3 py-2 rounded-lg text-sm"
-                    style={{ background: 'var(--background)', border: '1px solid var(--border)', color: 'var(--foreground)' }}
-                  />
-                </div>
-                <div>
-                  <label className="block text-sm font-medium mb-1" style={{ color: 'var(--muted-foreground)' }}>Status</label>
-                  <select
-                    value={form.Status}
-                    onChange={(e) => setForm({ ...form, Status: e.target.value })}
-                    className="w-full px-3 py-2 rounded-lg text-sm"
-                    style={{ background: 'var(--background)', border: '1px solid var(--border)', color: 'var(--foreground)' }}
-                  >
-                    <option value="pendente">Pendente</option>
-                    <option value="pago">Pago</option>
-                    <option value="atrasado">Atrasado</option>
-                  </select>
-                </div>
-              </div>
-              <div>
-                <label className="block text-sm font-medium mb-1" style={{ color: 'var(--muted-foreground)' }}>Observacoes</label>
-                <textarea
-                  value={form.Observacoes}
-                  onChange={(e) => setForm({ ...form, Observacoes: e.target.value })}
-                  className="w-full px-3 py-2 rounded-lg text-sm"
-                  rows={2}
-                  style={{ background: 'var(--background)', border: '1px solid var(--border)', color: 'var(--foreground)' }}
-                />
-              </div>
-            </div>
-            <div className="flex justify-end gap-3 mt-6">
-              <button
-                onClick={() => setShowModal(false)}
-                className="px-4 py-2 rounded-lg text-sm font-medium"
-                style={{ background: 'var(--muted)', color: 'var(--muted-foreground)' }}
-              >
-                Cancelar
-              </button>
-              <button
-                onClick={handleSave}
-                className="px-4 py-2 rounded-lg text-sm font-medium text-white"
-                style={{ background: 'var(--primary)' }}
-              >
-                Salvar
-              </button>
-            </div>
-          </div>
-        </div>
-      )}
     </div>
   )
 }
