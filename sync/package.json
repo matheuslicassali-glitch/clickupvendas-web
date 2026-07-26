@@ -1,0 +1,14 @@
+{
+  "name": "clickup-sync",
+  "version": "1.0.0",
+  "description": "Sincroniza dados do SQLite local para Supabase",
+  "type": "module",
+  "scripts": {
+    "sync": "node sqlite-to-supabase.js",
+    "sync:watch": "node sqlite-to-supabase.js --watch"
+  },
+  "dependencies": {
+    "better-sqlite3": "^11.0.0",
+    "@supabase/supabase-js": "^2.49.0"
+  }
+}
