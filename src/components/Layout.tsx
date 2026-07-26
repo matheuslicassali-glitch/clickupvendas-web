@@ -292,7 +292,9 @@ export default function Layout() {
         </header>
 
         <main className="flex-1 overflow-y-auto p-6 lg:p-8" style={{ background: 'var(--bg-primary)' }}>
-          {!lojaAtiva && lojas.length === 0 ? (
+          {location.pathname === '/lojas' ? (
+            <Outlet />
+          ) : !lojaAtiva && lojas.length === 0 ? (
             <div className="flex items-center justify-center h-full">
               <div className="text-center">
                 <div className="w-20 h-20 rounded-3xl flex items-center justify-center mx-auto mb-4" style={{ background: 'rgba(102, 126, 234, 0.1)' }}>
