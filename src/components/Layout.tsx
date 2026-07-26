@@ -9,9 +9,9 @@ import {
   ShoppingCart,
   Truck,
   UserCheck,
-  Eye,
   Store,
   ChevronDown,
+  Layers,
 } from 'lucide-react'
 import { useState, useRef, useEffect } from 'react'
 import { useStore } from '../contexts/StoreContext'
@@ -21,26 +21,13 @@ const menuItems = [
   { path: '/vendas', label: 'Vendas', icon: ShoppingCart },
   { path: '/financeiro', label: 'Financeiro', icon: DollarSign },
   { path: '/caixas', label: 'Caixas', icon: Wallet },
-  { path: '/relatorios', label: 'Relatorios', icon: BarChart3 },
+  { path: '/relatorios', label: 'Relatórios', icon: BarChart3 },
   { path: '/estoque', label: 'Estoque', icon: Package },
   { path: '/clientes', label: 'Clientes', icon: Users },
-  { path: '/funcionarios', label: 'Funcionarios', icon: UserCheck },
+  { path: '/funcionarios', label: 'Funcionários', icon: UserCheck },
   { path: '/fornecedores', label: 'Fornecedores', icon: Truck },
   { path: '/lojas', label: 'Lojas', icon: Store },
 ]
-
-const iconGradients: Record<string, string> = {
-  '/': 'linear-gradient(135deg, #667eea, #764ba2)',
-  '/vendas': 'linear-gradient(135deg, #11998e, #38ef7d)',
-  '/financeiro': 'linear-gradient(135deg, #f7971e, #ffd200)',
-  '/caixas': 'linear-gradient(135deg, #ee0979, #ff6a00)',
-  '/relatorios': 'linear-gradient(135deg, #4facfe, #00f2fe)',
-  '/estoque': 'linear-gradient(135deg, #43e97b, #38f9d7)',
-  '/clientes': 'linear-gradient(135deg, #fa709a, #fee140)',
-  '/funcionarios': 'linear-gradient(135deg, #a18cd1, #fbc2eb)',
-  '/fornecedores': 'linear-gradient(135deg, #fccb90, #d57eeb)',
-  '/lojas': 'linear-gradient(135deg, #667eea, #764ba2)',
-}
 
 export default function Layout() {
   const [sidebarOpen, setSidebarOpen] = useState(false)
@@ -60,263 +47,180 @@ export default function Layout() {
   }, [])
 
   return (
-    <div className="flex h-screen overflow-hidden" style={{ background: 'var(--bg-primary)' }}>
+    <div className="flex h-screen overflow-hidden bg-[#09090b] text-[#fafafa]">
       {sidebarOpen && (
         <div
-          className="fixed inset-0 z-40 backdrop-blur-sm lg:hidden"
-          style={{ background: 'rgba(0,0,0,0.6)' }}
+          className="fixed inset-0 z-40 bg-black/60 backdrop-blur-sm lg:hidden"
           onClick={() => setSidebarOpen(false)}
         />
       )}
 
+      {/* Sidebar */}
       <aside
-        className={`fixed lg:static inset-y-0 left-0 z-50 w-[272px] flex flex-col transform transition-all duration-300 ease-out lg:translate-x-0 ${
+        className={`fixed lg:static inset-y-0 left-0 z-50 w-[260px] flex flex-col bg-[#0b0b0e] border-r border-[#27272a] transition-transform duration-200 ease-out lg:translate-x-0 ${
           sidebarOpen ? 'translate-x-0' : '-translate-x-full'
         }`}
-        style={{
-          background: 'linear-gradient(180deg, #0a0e1a 0%, #0d1220 50%, #0f1628 100%)',
-          borderRight: '1px solid rgba(255,255,255,0.06)',
-        }}
       >
-        {/* Logo */}
-        <div className="flex items-center gap-3.5 h-[80px] px-6 relative" style={{ borderBottom: '1px solid rgba(255,255,255,0.06)' }}>
-          <div className="relative">
-            <div className="w-10 h-10 rounded-2xl flex items-center justify-center" style={{ background: 'linear-gradient(135deg, #667eea, #764ba2)', boxShadow: '0 4px 15px rgba(102, 126, 234, 0.3)' }}>
-              <Eye size={20} className="text-white" />
-            </div>
-            <div className="absolute -top-0.5 -right-0.5 w-3 h-3 rounded-full" style={{ background: '#38ef7d', boxShadow: '0 0 8px #38ef7d' }} />
+        {/* Brand / Logo */}
+        <div className="flex items-center gap-3 h-[70px] px-6 border-b border-[#27272a]">
+          <div className="w-8 h-8 rounded-lg bg-indigo-600 flex items-center justify-center shadow-sm">
+            <Layers size={18} className="text-white" />
           </div>
           <div>
-            <h1 className="text-[16px] font-extrabold tracking-tight" style={{ background: 'linear-gradient(135deg, #f1f5f9, #94a3b8)', WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent' }}>
-              ClickUp Vendas
-            </h1>
-            <p className="text-[11px] font-medium" style={{ color: '#475569' }}>Painel Gerencial</p>
+            <h1 className="text-[14px] font-semibold tracking-tight text-white">ClickUp Vendas</h1>
+            <p className="text-[11px] text-[#71717a]">Painel Gerencial</p>
           </div>
         </div>
 
-        {/* Store Selector in Sidebar */}
+        {/* Store Selector */}
         {lojas.length > 0 && (
-          <div className="px-4 py-3 relative" style={{ borderBottom: '1px solid rgba(255,255,255,0.06)' }}>
-            <div ref={dropdownRef}>
-              <button
-                onClick={() => setStoreDropdownOpen(!storeDropdownOpen)}
-                className="w-full flex items-center gap-3 px-3 py-2.5 rounded-xl transition-all duration-200"
-                style={{
-                  background: 'rgba(102, 126, 234, 0.08)',
-                  border: '1px solid rgba(102, 126, 234, 0.15)',
-                }}
-              >
-                <div className="w-8 h-8 rounded-lg flex items-center justify-center" style={{ background: 'linear-gradient(135deg, #667eea, #764ba2)' }}>
-                  <Store size={14} className="text-white" />
-                </div>
-                <div className="flex-1 text-left min-w-0">
-                  <p className="text-[12px] font-bold truncate" style={{ color: '#f1f5f9' }}>
-                    {lojaAtiva?.nome || 'Nenhuma loja'}
-                  </p>
-                  <p className="text-[10px] truncate" style={{ color: '#475569' }}>
-                    {lojaAtiva ? lojaAtiva.supabaseUrl.replace('https://', '').split('.')[0] : 'Configure em Lojas'}
-                  </p>
-                </div>
-                <ChevronDown
-                  size={14}
-                  style={{
-                    color: '#64748b',
-                    transform: storeDropdownOpen ? 'rotate(180deg)' : 'rotate(0)',
-                    transition: 'transform 0.2s',
-                  }}
-                />
-              </button>
+          <div className="p-3 border-b border-[#27272a] relative" ref={dropdownRef}>
+            <button
+              onClick={() => setStoreDropdownOpen(!storeDropdownOpen)}
+              className="w-full flex items-center gap-3 px-3 py-2 rounded-lg bg-[#18181b] border border-[#27272a] hover:border-[#3f3f46] transition-colors text-left"
+            >
+              <div className="w-6 h-6 rounded bg-indigo-500/10 text-indigo-400 flex items-center justify-center text-xs font-semibold">
+                <Store size={14} />
+              </div>
+              <div className="flex-1 min-w-0">
+                <p className="text-[12px] font-medium truncate text-white">{lojaAtiva?.nome || 'Selecionar loja'}</p>
+                <p className="text-[10px] text-[#71717a] truncate">Multi-loja ativo</p>
+              </div>
+              <ChevronDown size={14} className={`text-[#71717a] transition-transform ${storeDropdownOpen ? 'rotate-180' : ''}`} />
+            </button>
 
-              {storeDropdownOpen && (
-                <div
-                  className="absolute left-4 right-4 top-full mt-1 rounded-xl overflow-hidden z-50"
-                  style={{
-                    background: '#0d1220',
-                    border: '1px solid rgba(255,255,255,0.08)',
-                    boxShadow: '0 20px 60px rgba(0,0,0,0.5)',
-                    animation: 'fadeIn 0.15s ease-out',
-                  }}
-                >
+            {storeDropdownOpen && (
+              <div className="absolute left-3 right-3 top-full mt-1 bg-[#121215] border border-[#27272a] rounded-lg shadow-xl overflow-hidden z-50">
+                <div className="p-1">
                   {lojas.map((loja) => (
                     <button
                       key={loja.id}
                       onClick={() => { selecionar(loja.id); setStoreDropdownOpen(false) }}
-                      className="w-full flex items-center gap-3 px-3 py-2.5 text-left transition-all duration-150"
-                      style={{
-                        background: lojaAtiva?.id === loja.id ? 'rgba(102, 126, 234, 0.1)' : 'transparent',
-                        borderBottom: '1px solid rgba(255,255,255,0.04)',
-                      }}
-                      onMouseEnter={(e) => { if (lojaAtiva?.id !== loja.id) e.currentTarget.style.background = 'rgba(255,255,255,0.03)' }}
-                      onMouseLeave={(e) => { if (lojaAtiva?.id !== loja.id) e.currentTarget.style.background = 'transparent' }}
+                      className={`w-full flex items-center gap-2.5 px-3 py-2 rounded text-left text-[12px] font-medium transition-colors ${
+                        lojaAtiva?.id === loja.id ? 'bg-indigo-600/10 text-indigo-400' : 'text-[#a1a1aa] hover:bg-white/[0.03] hover:text-white'
+                      }`}
                     >
-                      <div
-                        className="w-7 h-7 rounded-lg flex items-center justify-center text-[10px] font-bold"
-                        style={{
-                          background: lojaAtiva?.id === loja.id ? 'linear-gradient(135deg, #667eea, #764ba2)' : 'rgba(255,255,255,0.05)',
-                          color: lojaAtiva?.id === loja.id ? 'white' : '#64748b',
-                        }}
-                      >
-                        {loja.nome.slice(0, 2).toUpperCase()}
-                      </div>
-                      <div className="flex-1 min-w-0">
-                        <p className="text-[12px] font-semibold truncate" style={{ color: lojaAtiva?.id === loja.id ? '#f1f5f9' : '#94a3b8' }}>
-                          {loja.nome}
-                        </p>
-                      </div>
-                      {lojaAtiva?.id === loja.id && (
-                        <div className="w-2 h-2 rounded-full" style={{ background: '#38ef7d', boxShadow: '0 0 6px #38ef7d' }} />
-                      )}
+                      <span className="w-1.5 h-1.5 rounded-full bg-current" />
+                      <span className="truncate">{loja.nome}</span>
                     </button>
                   ))}
+                  <div className="border-t border-[#27272a] my-1" />
                   <NavLink
                     to="/lojas"
                     onClick={() => setStoreDropdownOpen(false)}
-                    className="flex items-center gap-3 px-3 py-2.5 text-left transition-all duration-150"
-                    style={{ color: '#667eea' }}
-                    onMouseEnter={(e) => { e.currentTarget.style.background = 'rgba(102, 126, 234, 0.08)' }}
-                    onMouseLeave={(e) => { e.currentTarget.style.background = 'transparent' }}
+                    className="flex items-center gap-2 px-3 py-2 rounded text-[12px] font-medium text-indigo-400 hover:bg-indigo-600/10"
                   >
-                    <div className="w-7 h-7 rounded-lg flex items-center justify-center" style={{ background: 'rgba(102, 126, 234, 0.1)' }}>
-                      <Store size={12} style={{ color: '#667eea' }} />
-                    </div>
-                    <span className="text-[12px] font-semibold">Gerenciar Lojas</span>
+                    <Store size={14} />
+                    Gerenciar Lojas
                   </NavLink>
                 </div>
-              )}
-            </div>
+              </div>
+            )}
           </div>
         )}
 
-        {/* Menu */}
-        <nav className="flex-1 overflow-y-auto px-4 py-5 space-y-1">
-          <p className="text-[10px] font-bold uppercase tracking-widest mb-3 px-3" style={{ color: '#334155' }}>Menu Principal</p>
-          {menuItems.map((item, index) => {
+        {/* Navigation */}
+        <nav className="flex-1 overflow-y-auto px-3 py-4 space-y-0.5">
+          <p className="px-3 pb-2 text-[10px] font-semibold uppercase tracking-wider text-[#71717a]">Menu</p>
+          {menuItems.map((item) => {
             const Icon = item.icon
             const isActive = location.pathname === item.path
-            const gradient = iconGradients[item.path]
             return (
               <NavLink
                 key={item.path}
                 to={item.path}
                 onClick={() => setSidebarOpen(false)}
-                className="group flex items-center gap-3 px-3 py-2.5 rounded-2xl text-[13px] font-medium transition-all duration-200"
-                style={{
-                  animationDelay: `${index * 30}ms`,
-                  background: isActive ? 'rgba(255,255,255,0.06)' : 'transparent',
-                  color: isActive ? '#f1f5f9' : '#64748b',
-                }}
+                className={`flex items-center gap-3 px-3 py-2 rounded-lg text-[13px] font-medium transition-colors ${
+                  isActive
+                    ? 'bg-[#18181b] text-white font-semibold border border-[#27272a]'
+                    : 'text-[#a1a1aa] hover:bg-[#18181b]/50 hover:text-white'
+                }`}
               >
-                <div
-                  className="w-9 h-9 rounded-xl flex items-center justify-center transition-all duration-300"
-                  style={{
-                    background: isActive ? gradient : 'rgba(255,255,255,0.03)',
-                    boxShadow: isActive ? `0 4px 12px ${gradient?.match(/#[0-9a-f]+/i)?.[0]}33` : 'none',
-                  }}
-                >
-                  <Icon size={17} style={{ color: isActive ? '#fff' : '#64748b' }} />
-                </div>
-                <span className="flex-1">{item.label}</span>
-                {isActive && (
-                  <div className="w-1.5 h-1.5 rounded-full" style={{ background: '#38ef7d', boxShadow: '0 0 6px #38ef7d' }} />
-                )}
+                <Icon size={16} className={isActive ? 'text-indigo-400' : 'text-[#71717a]'} />
+                <span>{item.label}</span>
               </NavLink>
             )
           })}
         </nav>
 
-        {/* Footer */}
-        <div className="px-4 py-4" style={{ borderTop: '1px solid rgba(255,255,255,0.06)' }}>
-          <div className="flex items-center gap-3 px-3 py-3 rounded-2xl" style={{ background: 'rgba(255,255,255,0.03)' }}>
-            <div className="w-9 h-9 rounded-xl flex items-center justify-center text-[11px] font-bold" style={{ background: 'linear-gradient(135deg, #667eea, #764ba2)', color: 'white' }}>
+        {/* Sidebar Footer */}
+        <div className="p-3 border-t border-[#27272a]">
+          <div className="flex items-center gap-3 px-3 py-2 rounded-lg bg-[#121215] border border-[#27272a]">
+            <div className="w-7 h-7 rounded bg-[#27272a] flex items-center justify-center text-[11px] font-bold text-white">
               CU
             </div>
             <div className="flex-1 min-w-0">
-              <p className="text-[13px] font-semibold" style={{ color: '#cbd5e1' }}>ClickUp</p>
-              <p className="text-[11px]" style={{ color: '#475569' }}>Somente visualizacao</p>
+              <p className="text-[12px] font-medium text-white truncate">ClickUp Vendas</p>
+              <p className="text-[10px] text-[#71717a]">Modo Leitura</p>
             </div>
-            <div className="px-2 py-1 rounded-lg" style={{ background: 'rgba(56, 239, 125, 0.1)' }}>
-              <span className="text-[10px] font-bold" style={{ color: '#38ef7d' }}>VIEW</span>
-            </div>
+            <span className="w-2 h-2 rounded-full bg-emerald-500" title="Online" />
           </div>
         </div>
       </aside>
 
-      {/* Main */}
-      <div className="flex-1 flex flex-col overflow-hidden">
-        <header
-          className="flex items-center h-[80px] px-6 lg:px-8"
-          style={{
-            background: 'linear-gradient(180deg, #0a0e1a 0%, rgba(10, 14, 26, 0.95) 100%)',
-            borderBottom: '1px solid rgba(255,255,255,0.06)',
-            backdropFilter: 'blur(20px)',
-          }}
-        >
+      {/* Main Content Area */}
+      <div className="flex-1 flex flex-col overflow-hidden bg-[#09090b]">
+        {/* Header */}
+        <header className="flex items-center h-[70px] px-6 lg:px-8 bg-[#09090b] border-b border-[#27272a]">
           <button
             onClick={() => setSidebarOpen(true)}
-            className="lg:hidden mr-4 p-2.5 rounded-xl transition-colors"
-            style={{ color: '#94a3b8', background: 'rgba(255,255,255,0.05)' }}
+            className="lg:hidden mr-4 p-2 rounded-lg text-[#a1a1aa] hover:bg-[#18181b]"
           >
-            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="18" x2="21" y2="18"/></svg>
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="18" x2="21" y2="18"/></svg>
           </button>
 
-          <div className="flex items-center gap-3">
-            <h2 className="text-[20px] font-bold" style={{ color: '#f1f5f9' }}>
-              {menuItems.find((m) => m.path === location.pathname)?.label || 'Dashboard'}
-            </h2>
-          </div>
+          <h2 className="text-[16px] font-semibold text-white">
+            {menuItems.find((m) => m.path === location.pathname)?.label || 'Dashboard'}
+          </h2>
 
           <div className="ml-auto flex items-center gap-3">
             {!lojaAtiva && lojas.length === 0 && (
               <NavLink
                 to="/lojas"
-                className="hidden sm:flex items-center gap-2 px-4 py-2 rounded-xl text-[12px] font-semibold transition-all"
-                style={{ background: 'rgba(102, 126, 234, 0.1)', color: '#667eea', border: '1px solid rgba(102, 126, 234, 0.2)' }}
+                className="flex items-center gap-2 px-3.5 py-1.5 rounded-lg bg-indigo-600 hover:bg-indigo-500 text-white text-[12px] font-medium transition-colors shadow-sm"
               >
                 <Store size={14} />
                 Configurar Loja
               </NavLink>
             )}
             {lojaAtiva && (
-              <div className="hidden sm:flex items-center gap-2.5 px-4 py-2 rounded-xl" style={{ background: 'rgba(56, 239, 125, 0.06)', border: '1px solid rgba(56, 239, 125, 0.15)' }}>
-                <div className="w-2 h-2 rounded-full" style={{ background: '#38ef7d', boxShadow: '0 0 8px #38ef7d', animation: 'pulse-glow 2s infinite' }} />
-                <span className="text-[12px] font-semibold" style={{ color: '#38ef7d' }}>Online</span>
+              <div className="flex items-center gap-2 px-3 py-1.5 rounded-lg bg-[#121215] border border-[#27272a] text-[12px]">
+                <span className="w-2 h-2 rounded-full bg-emerald-500" />
+                <span className="text-[#a18cf8] font-medium text-emerald-400">Sincronizado</span>
               </div>
             )}
-            <div className="hidden sm:flex items-center gap-2 px-3 py-2 rounded-xl" style={{ background: 'rgba(255,255,255,0.04)', border: '1px solid rgba(255,255,255,0.06)' }}>
-              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#64748b" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
-              <span className="text-[12px] font-medium" style={{ color: '#94a3b8' }}>
-                {new Date().toLocaleDateString('pt-BR', { weekday: 'short', day: '2-digit', month: 'short' })}
-              </span>
+            <div className="hidden sm:flex items-center gap-2 px-3 py-1.5 rounded-lg bg-[#121215] border border-[#27272a] text-[12px] text-[#71717a]">
+              <span>{new Date().toLocaleDateString('pt-BR', { weekday: 'short', day: '2-digit', month: 'short' })}</span>
             </div>
           </div>
         </header>
 
-        <main className="flex-1 overflow-y-auto p-6 lg:p-8" style={{ background: 'var(--bg-primary)' }}>
+        {/* Page Content */}
+        <main className="flex-1 overflow-y-auto p-6 lg:p-8 bg-[#09090b]">
           {location.pathname === '/lojas' ? (
             <Outlet />
           ) : !lojaAtiva && lojas.length === 0 ? (
             <div className="flex items-center justify-center h-full">
-              <div className="text-center">
-                <div className="w-20 h-20 rounded-3xl flex items-center justify-center mx-auto mb-4" style={{ background: 'rgba(102, 126, 234, 0.1)' }}>
-                  <Store size={36} style={{ color: '#667eea' }} />
+              <div className="max-w-md w-full bg-[#121215] border border-[#27272a] rounded-2xl p-8 text-center shadow-2xl">
+                <div className="w-12 h-12 rounded-xl bg-indigo-600/10 border border-indigo-500/20 flex items-center justify-center mx-auto mb-4 text-indigo-400">
+                  <Store size={22} />
                 </div>
-                <p className="text-[18px] font-bold mb-2" style={{ color: 'var(--text-primary)' }}>Bem-vindo ao Painel Gerencial</p>
-                <p className="text-[14px] mb-6" style={{ color: 'var(--text-muted)' }}>Adicione sua primeira loja para comecar</p>
+                <h3 className="text-lg font-semibold text-white mb-1">Nenhuma loja configurada</h3>
+                <p className="text-[13px] text-[#71717a] mb-6">Adicione os dados do Supabase da sua loja para visualizar as vendas e o estoque em tempo real.</p>
                 <NavLink
                   to="/lojas"
-                  className="inline-flex items-center gap-2 px-6 py-3 rounded-xl text-[14px] font-semibold"
-                  style={{ background: 'linear-gradient(135deg, #667eea, #764ba2)', color: 'white' }}
+                  className="inline-flex items-center justify-center gap-2 w-full py-2.5 rounded-lg bg-indigo-600 hover:bg-indigo-500 text-white text-[13px] font-medium transition-colors shadow-sm"
                 >
-                  <Store size={18} />
-                  Configurar Loja
+                  <Store size={16} />
+                  Configurar Primeira Loja
                 </NavLink>
               </div>
             </div>
           ) : !lojaAtiva ? (
             <div className="flex items-center justify-center h-full">
               <div className="text-center">
-                <p className="text-[16px] font-bold mb-2" style={{ color: 'var(--text-primary)' }}>Selecione uma loja</p>
-                <p className="text-[13px] mb-4" style={{ color: 'var(--text-muted)' }}>Use o seletor no menu lateral</p>
+                <p className="text-sm font-medium text-white mb-1">Nenhuma loja selecionada</p>
+                <p className="text-xs text-[#71717a]">Selecione uma loja no menu lateral para visualizar os dados.</p>
               </div>
             </div>
           ) : (
